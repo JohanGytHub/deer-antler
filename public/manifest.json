@@ -1,0 +1,19 @@
+{
+  "name": "Deer Antler Jewelry by Johan",
+  "short_name": "Deer Antler",
+  "description": "Handcrafted deer antler wedding rings and jewelry. Naturally shed antlers, ethically sourced. Made in Minneapolis, USA.",
+  "theme_color": "#0f1a0e",
+  "background_color": "#0f1a0e",
+  "display": "standalone",
+  "start_url": "/",
+  "lang": "en-US",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

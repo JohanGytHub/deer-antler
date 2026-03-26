@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Contact | Deer Antler Rings by Jewelry by Johan"
+  description="Contact Jewelry by Johan about deer antler rings, trophy antler custom orders, sizing questions, or general inquiries. Handcrafted in Minneapolis, USA since 2008."
+>
+  <Nav />
+
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770]">
+          <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+          <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+          <li class="text-[#d4b896]" aria-current="page">Contact</li>
+        </ol>
+      </nav>
+      <h1 class="font-serif text-[clamp(2rem,5vw,3.5rem)] text-[#f0ede8] animate-fade-up">Get in Touch</h1>
+      <p class="text-lg text-[#b8b5ae] mt-4 animate-fade-up delay-100">Questions about antler rings, trophy antler custom orders, sizing, or anything else — we're here to help.</p>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+
+    <!-- Primary contact CTA -->
+    <section class="bg-[#1c2a1b] border border-[#2e3d2d] p-8 mb-12 text-center">
+      <div class="w-14 h-14 rounded-full bg-[#162114] border border-[#2e3d2d] flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-[#b8860b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </div>
+      <h2 class="font-serif text-2xl text-[#d4b896] mb-3">Contact Jewelry by Johan</h2>
+      <p class="text-sm text-[#b8b5ae] leading-relaxed mb-6 max-w-md mx-auto">
+        All order inquiries, custom order requests, and customer service are handled through the Jewelry by Johan website. Use the button below to reach our team directly.
+      </p>
+      <a href="https://jewelrybyjohan.com/pages/contact-us" target="_blank" rel="noopener noreferrer" class="btn-gold">
+        Contact Us at Jewelry by Johan
+      </a>
+    </section>
+
+    <!-- What to contact us about -->
+    <section class="mb-12">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-6">What Can We Help With?</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[
+          { icon: '🦌', title: 'Trophy Antler Custom Orders', body: 'Want to send your own shed or trophy antler to be made into a ring? Contact us to start the process — we\'ll provide shipping instructions.' },
+          { icon: '📏', title: 'Sizing Questions', body: 'Not sure of your ring size? We can help. We also offer a custom ring sizer for $10. Remember — antler rings cannot be resized after crafting.' },
+          { icon: '💍', title: 'Custom Ring Design', body: 'Looking for a specific metal, width, antler type, or combination material? Contact us to discuss custom design options.' },
+          { icon: '✏️', title: 'Engraving Questions', body: 'Free laser engraving up to 25 characters is included with every ring. Contact us about font choices and character limits.' },
+          { icon: '📦', title: 'Order Status', body: 'All orders are placed and managed at jewelrybyjohan.com. For order status updates, please contact us through the main store.' },
+          { icon: '↩️', title: 'Returns & RGA', body: 'Returns are accepted for in-store credit only. Visit our return policy page or the Returns & RGA page at jewelrybyjohan.com to start the process.' },
+        ].map((item) => (
+          <div class="card p-5 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">{item.icon}</span>
+            <div>
+              <h3 class="font-serif text-base text-[#d4b896] mb-1">{item.title}</h3>
+              <p class="text-xs text-[#b8b5ae] leading-relaxed">{item.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Quick links -->
+    <section class="bg-[#162114] border border-[#2e3d2d] p-7">
+      <h2 class="font-serif text-xl text-[#d4b896] mb-5">Helpful Links Before You Contact Us</h2>
+      <ul class="space-y-3">
+        {[
+          { href: '/sizing-guide',                                                               label: 'Ring Sizing Guide',          desc: 'Find your correct size before ordering' },
+          { href: 'https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170',             label: 'Order a Ring Sizer ($10)',    desc: 'Physical sizer mailed to you' },
+          { href: 'https://jewelrybyjohan.com/pages/faqs',                                      label: 'FAQs at Jewelry by Johan',   desc: 'Answers to common questions' },
+          { href: '/return-policy',                                                               label: 'Return Policy',              desc: 'In-store credit terms and RGA process' },
+          { href: '/custom',                                                                      label: 'Trophy Antler Custom Rings', desc: 'Send your own antler — learn how' },
+        ].map((link) => (
+          <li>
+            <a href={link.href}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              class="flex items-center justify-between gap-4 group">
+              <div>
+                <span class="text-sm text-[#d4b896] group-hover:text-[#f0ede8] transition-colors font-sans">{link.label}</span>
+                <span class="text-xs text-[#7a7770] block">{link.desc}</span>
+              </div>
+              <svg class="w-4 h-4 text-[#7a7770] flex-shrink-0 group-hover:text-[#b8860b] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+  </main>
+
+  <Footer />
+</BaseLayout>

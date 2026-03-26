@@ -1,0 +1,153 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, isCustomProduct } from '../../data/products';
+
+const allProducts = await fetchProducts();
+
+// Show products tagged 'trophy-antler', fall back to showing rings if none tagged yet
+const customProducts = allProducts.filter(isCustomProduct);
+const fallbackProducts = customProducts.length === 0
+  ? allProducts.filter((p) => p.product_type === 'Rings').slice(0, 8)
+  : customProducts;
+---
+
+<CollectionLayout
+  title="Trophy Antler Custom Rings | Send Your Own Antler"
+  description="Send your own shed or trophy antler to Jewelry by Johan and we'll craft it into a custom ring. Deer, elk, and moose antler accepted. Handcrafted in Minneapolis, USA."
+  heading="Trophy Antler Custom Rings"
+  subheading="Your hunt. Your memory. Your ring. Send us your own shed or trophy antler and our craftsmen will transform it into a ring you'll wear every day."
+  collectionName="Trophy Antler Custom"
+  collectionPath="/custom"
+  productCount={undefined}
+>
+
+  <!-- Hero differentiator banner -->
+  <div class="mb-10 bg-[#162114] border border-[#b8860b]/40 p-8">
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+      <div class="flex-1">
+        <p class="font-sans text-xs font-semibold tracking-[0.15em] uppercase text-[#b8860b] mb-3">Major Differentiator — Unique to Jewelry by Johan</p>
+        <h2 class="font-serif text-[clamp(1.5rem,3vw,2.2rem)] text-[#f0ede8] mb-4 leading-tight">
+          The Same Hills Your Trophy Came From.<br />
+          <span class="text-[#d4b896]">Now on Your Finger.</span>
+        </h2>
+        <p class="text-[#b8b5ae] text-sm leading-relaxed mb-4">
+          Most antler ring makers use commercially sourced antler. We go further: if you have a shed antler or a trophy rack that means something to you — a first harvest, a record buck, a season you'll never forget — our team can craft that specific antler into your ring.
+        </p>
+        <p class="text-[#b8b5ae] text-sm leading-relaxed">
+          We accept deer, elk, and moose antler. We provide shipping instructions and work with you throughout the process to ensure your ring reflects the memory you want to carry.
+        </p>
+      </div>
+      <div class="flex-shrink-0 w-full lg:w-72">
+        <div class="bg-[#1c2a1b] border border-[#2e3d2d] p-6 space-y-4">
+          <p class="font-serif text-lg text-[#d4b896]">How It Works</p>
+          {[
+            { n: '1', t: 'Contact us',        d: 'Reach out at Jewelry by Johan with your antler details, ring size, and metal preference.' },
+            { n: '2', t: 'Ship your antler',  d: 'We provide shipping instructions. Securely pack and ship your antler to our Minneapolis workshop.' },
+            { n: '3', t: 'We craft your ring',d: 'Our bench jewelers section and inlay your antler into the ring. Ring Armor coating applied.' },
+            { n: '4', t: 'Ring ships to you', d: 'Your finished ring ships back with free laser engraving applied (up to 25 characters).' },
+          ].map((step) => (
+            <div class="flex gap-3 items-start">
+              <span class="font-serif text-sm font-semibold text-[#b8860b] w-5 flex-shrink-0">{step.n}</span>
+              <div>
+                <p class="text-xs font-semibold text-[#f0ede8] mb-0.5">{step.t}</p>
+                <p class="text-xs text-[#7a7770] leading-snug">{step.d}</p>
+              </div>
+            </div>
+          ))}
+          <a href="https://jewelrybyjohan.com/pages/contact-us" target="_blank" rel="noopener noreferrer"
+            class="btn-gold w-full justify-center text-xs py-2.5 mt-2">
+            Start My Custom Order
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What we accept -->
+  <section class="mb-12 grid grid-cols-1 sm:grid-cols-3 gap-5">
+    {[
+      { icon: '🦌', title: 'Deer Antler',      body: 'White-tailed and mule deer antler. Most common and available in a wide range of ring sizes. Natural ivory-cream tones.' },
+      { icon: '🫎', title: 'Elk Antler',        body: 'Larger and denser than deer antler. Ideal for wider band styles and ring sizes 11 and above. Rich warm tones.' },
+      { icon: '🦣', title: 'Moose Antler',      body: 'The largest and flattest antler. Excellent for wide bands with broad, flat inlay faces. Dramatic natural character.' },
+    ].map((item) => (
+      <div class="card p-6 text-center flex flex-col items-center gap-3">
+        <span class="text-4xl">{item.icon}</span>
+        <h3 class="font-serif text-lg text-[#d4b896]">{item.title}</h3>
+        <p class="text-xs text-[#b8b5ae] leading-relaxed">{item.body}</p>
+        <span class="badge-antler">Accepted</span>
+      </div>
+    ))}
+  </section>
+
+  <!-- Important notices -->
+  <section class="mb-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {[
+      { icon: '⚠️', title: 'Cannot Be Resized', body: 'Trophy antler rings — like all antler inlay rings — cannot be resized after crafting. Confirm your ring size before shipping your antler. Use our sizing guide or order a custom ring sizer ($10).' },
+      { icon: '✏️', title: 'Free Laser Engraving', body: 'Free laser engraving up to 25 characters is included with every ring, including custom trophy antler orders. Choose your font and message when you place your order.' },
+      { icon: '🛡️', title: 'Ring Armor Coating', body: 'All antler rings receive our Ring Armor protective sealant — applied by our bench jewelers to protect against moisture, daily wear, and UV exposure.' },
+      { icon: '↩️', title: 'No Returns on Custom', body: 'Trophy antler rings made from customer-supplied antler are not eligible for return or exchange — they are one-of-a-kind pieces made from your unique materials.' },
+    ].map((item) => (
+      <div class="card p-5 flex gap-4 items-start">
+        <span class="text-xl flex-shrink-0">{item.icon}</span>
+        <div>
+          <h3 class="font-serif text-base text-[#d4b896] mb-1">{item.title}</h3>
+          <p class="text-xs text-[#b8b5ae] leading-relaxed">{item.body}</p>
+        </div>
+      </div>
+    ))}
+  </section>
+
+  <!-- Related products heading -->
+  {fallbackProducts.length > 0 && (
+    <div class="mb-6">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-2">
+        {customProducts.length > 0 ? 'Trophy Antler Ring Examples' : 'Antler Ring Styles Available for Custom Orders'}
+      </h2>
+      <p class="text-sm text-[#b8b5ae]">
+        {customProducts.length > 0
+          ? 'These rings were crafted from customer-supplied trophy antler. Your ring will be unique to your antler.'
+          : 'These ring styles can be crafted using your own trophy antler — contact us to discuss options.'}
+      </p>
+    </div>
+  )}
+
+  {fallbackProducts.length > 0 && (
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 mb-10">
+      {fallbackProducts.map((product, i) => (
+        <ProductCard product={product} eager={i < 4} />
+      ))}
+    </div>
+  )}
+
+  <!-- FAQ -->
+  <section class="mt-8 border-t border-[#2e3d2d] pt-12">
+    <h2 class="font-serif text-2xl text-[#f0ede8] mb-6">Trophy Antler FAQ</h2>
+    <div class="space-y-4 max-w-3xl">
+      {[
+        { q: 'Can I send a shed antler I found in the woods?', a: 'Yes — naturally shed antlers are ideal. Whether you found it on a walk or collected it from your property, shed antler works perfectly for custom rings.' },
+        { q: 'Can I send antler from a deer I harvested?', a: 'Yes. Trophy antler from a hunt is exactly what this program is designed for. We handle your antler with care and return any unused portions along with your finished ring.' },
+        { q: 'How much antler do I need to send?', a: 'A single main beam from a typical white-tailed deer provides enough material for multiple rings. Contact us with the approximate size of your antler and we can advise before you ship.' },
+        { q: 'Will I get back any unused antler?', a: 'Yes — unused portions of your antler are returned to you along with your finished ring.' },
+        { q: 'How long does a custom trophy antler ring take?', a: 'Custom orders typically take longer than in-stock rings. Contact Jewelry by Johan for current lead times on custom trophy antler orders.' },
+        { q: 'Can I get a custom ring made from elk or moose antler I harvested?', a: 'Yes — elk and moose antler are both accepted. Elk and moose antler is particularly well-suited to wider band styles and larger ring sizes.' },
+      ].map((item) => (
+        <details class="card p-5 group">
+          <summary class="font-serif text-base text-[#d4b896] cursor-pointer list-none flex items-center justify-between gap-4">
+            {item.q}
+            <svg class="w-4 h-4 text-[#7a7770] flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <p class="text-sm text-[#b8b5ae] leading-relaxed mt-3 border-t border-[#2e3d2d] pt-3">{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a href="https://jewelrybyjohan.com/pages/contact-us" target="_blank" rel="noopener noreferrer" class="btn-gold">Start My Custom Order</a>
+      <a href="/sizing-guide" class="btn-outline">Ring Sizing Guide</a>
+    </div>
+  </section>
+
+</CollectionLayout>

@@ -1,0 +1,611 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { fetchProducts, getProductImageSrc, getProductUrl, getLocalProductUrl, getProductAlt } from '../data/products';
+import { blogPosts } from '../data/blog';
+
+const allProducts = await fetchProducts();
+
+const productIndex = allProducts.map((p) => {
+  const t = p.title.toLowerCase();
+  const materials: string[] = [];
+  if (t.includes('meteorite'))                                   materials.push('meteorite');
+  if (t.includes('dinosaur') || t.includes('dino'))             materials.push('dino-bone');
+  if (t.includes('wood') || t.includes('koa') || t.includes('whiskey')) materials.push('wood');
+  if (t.includes('turquoise'))                                   materials.push('turquoise');
+  if (t.includes('opal'))                                        materials.push('opal');
+  if (t.includes('elk'))                                         materials.push('elk');
+  if (t.includes('moose'))                                       materials.push('moose');
+
+  const typeMap: Record<string, string> = {
+    'Rings':                  'rings',
+    'In Stock Wedding Bands': 'rings',
+    'Ring Sets':              'ring-sets',
+    'Ring Set':               'ring-sets',
+    'Earrings':               'earrings',
+    'Pendants':               'pendants',
+    'Necklaces':              'pendants',
+    'Cufflinks':              'cufflinks',
+    'Tie Clips':              'tie-clips',
+    'Tie Clip':               'tie-clips',
+    'Unique':                 'unique',
+  };
+
+  return {
+    type:      'product',
+    title:     p.title,
+    handle:    p.handle,
+    localUrl:  getLocalProductUrl(p),
+    jbjUrl:    getProductUrl(p),
+    img:       getProductImageSrc(p),
+    alt:       getProductAlt(p),
+    tags:      p.tags.join(' ').toLowerCase(),
+    ptype:     p.product_type,
+    bucket:    typeMap[p.product_type] ?? 'rings',
+    materials,
+    price:     parseFloat(p.variants[0]?.price ?? '0') || 0,
+  };
+});
+
+const blogIndex = blogPosts.map((post) => ({
+  type:    'blog',
+  title:   post.title,
+  slug:    post.slug,
+  url:     `/blog/${post.slug}`,
+  excerpt: post.excerpt,
+  cat:     post.category,
+}));
+
+const searchIndex   = JSON.stringify([...productIndex, ...blogIndex]);
+const productCount  = productIndex.length;
+const blogCount     = blogIndex.length;
+
+// Price range for slider — computed from real product data at build time
+// Products with price === 0 are "Contact for price" and excluded from range calc
+const pricedProducts  = productIndex.filter(p => p.price > 0);
+const rawMin = pricedProducts.length ? Math.floor(Math.min(...pricedProducts.map(p => p.price))) : 0;
+const rawMax = pricedProducts.length ? Math.ceil( Math.max(...pricedProducts.map(p => p.price))) : 2000;
+// Round to nearest $25 for clean slider steps
+const sliderMin = Math.floor(rawMin / 25) * 25;
+const sliderMax = Math.ceil( rawMax / 25) * 25;
+---
+
+<BaseLayout
+  title="Search Deer Antler Jewelry | deer-antler.jewelry"
+  description="Search deer antler rings, earrings, pendants, cufflinks, and blog posts from Jewelry by Johan."
+  noindex={true}
+>
+  <Nav />
+
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-14">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-serif text-[clamp(2rem,5vw,3rem)] text-[#f0ede8] mb-6 animate-fade-up">Search</h1>
+      <div class="relative">
+        <input
+          id="search-input"
+          type="search"
+          placeholder="Search rings, blog posts, materials…"
+          autocomplete="off"
+          autofocus
+          class="w-full bg-[#1c2a1b] border border-[#2e3d2d] focus:border-[#b8860b] text-[#f0ede8] placeholder-[#7a7770] px-5 py-4 pr-12 font-sans text-base outline-none transition-colors duration-200"
+          aria-label="Search deer antler jewelry"
+        />
+        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#7a7770] pointer-events-none"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/>
+        </svg>
+      </div>
+      <div class="flex items-center justify-between mt-3 h-5">
+        <p id="result-count" class="text-xs text-[#7a7770]"></p>
+        <button id="clear-all-btn" class="hidden text-xs text-[#b8860b] hover:text-[#d4b896] transition-colors font-sans underline underline-offset-2">
+          Clear all filters
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-[60vh]">
+
+    <div id="filter-bar" class="mb-8 space-y-3">
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="filter-row-label">Show</span>
+        <button class="filter-btn type-btn active" data-filter="type" data-value="all">All <span id="badge-all" class="filter-badge"></span></button>
+        <button class="filter-btn type-btn"        data-filter="type" data-value="product">Products <span id="badge-products" class="filter-badge"></span></button>
+        <button class="filter-btn type-btn"        data-filter="type" data-value="blog">Blog Posts <span id="badge-blog" class="filter-badge"></span></button>
+      </div>
+
+      <div id="row-collection" class="flex items-center gap-2 flex-wrap">
+        <span class="filter-row-label">Category</span>
+        <button class="filter-btn coll-btn active" data-filter="collection" data-value="all">All Types</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="rings">Rings</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="ring-sets">Ring Sets</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="earrings">Earrings</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="pendants">Pendants</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="cufflinks">Cufflinks</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="tie-clips">Tie Clips</button>
+        <button class="filter-btn coll-btn"        data-filter="collection" data-value="unique">Unique</button>
+      </div>
+
+      <div id="row-material" class="flex items-center gap-2 flex-wrap">
+        <span class="filter-row-label">Material</span>
+        <button class="filter-btn mat-btn active" data-filter="material" data-value="all">All Materials</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="meteorite">+ Meteorite</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="dino-bone">+ Dino Bone</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="wood">+ Wood</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="turquoise">+ Turquoise</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="opal">+ Opal</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="elk">Elk Antler</button>
+        <button class="filter-btn mat-btn"        data-filter="material" data-value="moose">Moose Antler</button>
+      </div>
+
+      <!-- Price range slider — shown when type = all | product -->
+      <div id="row-price" class="flex items-center gap-4 flex-wrap">
+        <span class="filter-row-label">Price</span>
+        <div class="price-slider-wrap">
+          <div class="price-track">
+            <div id="price-fill" class="price-fill"></div>
+          </div>
+          <input id="range-min" type="range"
+            min={sliderMin} max={sliderMax} value={sliderMin} step="25"
+            class="price-range price-range-min"
+            aria-label="Minimum price" />
+          <input id="range-max" type="range"
+            min={sliderMin} max={sliderMax} value={sliderMax} step="25"
+            class="price-range price-range-max"
+            aria-label="Maximum price" />
+        </div>
+        <span id="price-label" class="price-label">
+          ${sliderMin} — ${sliderMax}
+        </span>
+        <button id="price-reset-btn" class="hidden text-xs text-[#b8860b] hover:text-[#d4b896] transition-colors font-sans underline underline-offset-2">
+          Reset
+        </button>
+      </div>
+
+      <div id="row-blogcat" class="hidden flex items-center gap-2 flex-wrap">
+        <span class="filter-row-label">Topic</span>
+        <button class="filter-btn bcat-btn active" data-filter="blogcat" data-value="all">All Topics</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Buying Guide">Buying Guide</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Style Guide">Style Guide</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Care Guide">Care Guide</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Wedding Guide">Wedding Guide</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Antler Science & Materials">Antler Science</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Materials Guide">Materials Guide</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Comparisons">Comparisons</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Gift Guide">Gift Guide</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Trophy Antler / Custom">Trophy Antler</button>
+        <button class="filter-btn bcat-btn"        data-filter="blogcat" data-value="Outdoor Lifestyle">Outdoor Lifestyle</button>
+      </div>
+
+      <div id="row-sort" class="hidden flex items-center gap-2 flex-wrap">
+        <span class="filter-row-label">Sort</span>
+        <button class="filter-btn sort-btn active" data-filter="sort" data-value="relevance">Relevance</button>
+        <button class="filter-btn sort-btn"        data-filter="sort" data-value="az">A → Z</button>
+        <button class="filter-btn sort-btn"        data-filter="sort" data-value="za">Z → A</button>
+      </div>
+
+    </div>
+
+    <div id="state-initial" class="text-center py-16">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">What are you looking for?</p>
+      <p class="text-sm text-[#b8b5ae] mb-8">
+        Search across <strong class="text-[#f0ede8]">{productCount}</strong> antler jewelry pieces
+        and <strong class="text-[#f0ede8]">{blogCount}</strong> blog posts.
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        {['antler rings', 'meteorite', 'ring sets', 'elk antler', 'trophy antler', 'wood inlay', 'dinosaur bone', 'opal'].map((term) => (
+          <button class="suggestion-btn btn-outline text-xs px-4 py-2" data-term={term}>{term}</button>
+        ))}
+      </div>
+    </div>
+
+    <div id="state-empty" class="hidden text-center py-16">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">No results found</p>
+      <p class="text-sm text-[#b8b5ae] mb-6">Try a different search term or adjust the filters above.</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="/rings"     class="btn-outline text-xs">Antler Rings</a>
+        <a href="/ring-sets" class="btn-outline text-xs">Ring Sets</a>
+        <a href="/custom"    class="btn-outline text-xs">Trophy Antler</a>
+        <a href="/blog"      class="btn-outline text-xs">Blog</a>
+      </div>
+    </div>
+
+    <div id="results-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .filter-row-label {
+    font-size:      0.65rem;
+    font-family:    var(--font-sans);
+    font-weight:    600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color:          var(--c-text-faint);
+    flex-shrink:    0;
+    margin-right:   0.25rem;
+  }
+  .filter-btn {
+    display:        inline-flex;
+    align-items:    center;
+    gap:            0.3rem;
+    padding:        0.3rem 0.85rem;
+    border:         1px solid var(--c-border);
+    border-radius:  999px;
+    font-family:    var(--font-sans);
+    font-size:      0.72rem;
+    font-weight:    500;
+    letter-spacing: 0.04em;
+    color:          var(--c-text-muted);
+    background:     transparent;
+    cursor:         pointer;
+    white-space:    nowrap;
+    transition:     background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .filter-btn:hover:not(.active) {
+    border-color: var(--c-gold);
+    color:        var(--c-antler);
+  }
+  .filter-btn.active {
+    background:   var(--c-gold);
+    border-color: var(--c-gold);
+    color:        #0f1a0e;
+    font-weight:  600;
+  }
+  html.light .filter-btn.active { color: #f4efe6; }
+  .filter-badge {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    min-width:       1.15rem;
+    height:          1.15rem;
+    padding:         0 0.2rem;
+    border-radius:   999px;
+    font-size:       0.58rem;
+    font-weight:     700;
+    background:      rgba(255,255,255,0.22);
+  }
+  .filter-badge:empty { display: none; }
+
+  /* ── Price range slider ───────────────────────────────────────── */
+  .price-slider-wrap {
+    position:  relative;
+    width:     200px;
+    height:    20px;
+    flex-shrink: 0;
+  }
+  .price-track {
+    position:      absolute;
+    top:           50%;
+    left:          0;
+    right:         0;
+    height:        4px;
+    background:    var(--c-border);
+    border-radius: 2px;
+    transform:     translateY(-50%);
+    pointer-events: none;
+  }
+  .price-fill {
+    position:      absolute;
+    height:        100%;
+    background:    var(--c-gold);
+    border-radius: 2px;
+  }
+  .price-range {
+    position:   absolute;
+    top:        50%;
+    left:       0;
+    width:      100%;
+    transform:  translateY(-50%);
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    pointer-events: none;
+    height:     20px;
+    margin:     0;
+  }
+  .price-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width:         16px;
+    height:        16px;
+    border-radius: 50%;
+    background:    var(--c-gold);
+    border:        2px solid var(--c-bg);
+    cursor:        pointer;
+    pointer-events: all;
+    box-shadow:    0 1px 4px rgba(0,0,0,0.4);
+    transition:    background 0.15s ease, transform 0.1s ease;
+  }
+  .price-range::-webkit-slider-thumb:hover {
+    background:  var(--c-gold-lt);
+    transform:   scale(1.15);
+  }
+  .price-range::-moz-range-thumb {
+    width:         14px;
+    height:        14px;
+    border-radius: 50%;
+    background:    var(--c-gold);
+    border:        2px solid var(--c-bg);
+    cursor:        pointer;
+    pointer-events: all;
+  }
+  .price-range:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--c-gold-lt);
+    outline-offset: 2px;
+  }
+  .price-label {
+    font-family:  var(--font-sans);
+    font-size:    0.75rem;
+    font-weight:  500;
+    color:        var(--c-antler);
+    white-space:  nowrap;
+    min-width:    7rem;
+  }
+</style>
+
+<script define:vars={{ searchIndex, sliderMin, sliderMax }}>
+  const INDEX = JSON.parse(searchIndex);
+
+  const input       = document.getElementById('search-input');
+  const grid        = document.getElementById('results-grid');
+  const stateInit   = document.getElementById('state-initial');
+  const stateEmpty  = document.getElementById('state-empty');
+  const counter     = document.getElementById('result-count');
+  const clearAllBtn = document.getElementById('clear-all-btn');
+  const rowSort     = document.getElementById('row-sort');
+  const rowColl     = document.getElementById('row-collection');
+  const rowMat      = document.getElementById('row-material');
+  const rowPrice    = document.getElementById('row-price');
+  const rowBlogCat  = document.getElementById('row-blogcat');
+
+  // Price slider elements
+  const rangeMin      = document.getElementById('range-min');
+  const rangeMax      = document.getElementById('range-max');
+  const priceFill     = document.getElementById('price-fill');
+  const priceLabel    = document.getElementById('price-label');
+  const priceResetBtn = document.getElementById('price-reset-btn');
+
+  const state = {
+    type: 'all', collection: 'all', material: 'all', blogcat: 'all', sort: 'relevance',
+    priceMin: sliderMin, priceMax: sliderMax,
+  };
+
+  function show(el) { el?.classList.remove('hidden'); }
+  function hide(el) { el?.classList.add('hidden'); }
+
+  function setActive(selector, value) {
+    document.querySelectorAll(selector).forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.value === value);
+    });
+  }
+
+  function updateBadges(textResults) {
+    const total    = textResults.length;
+    const products = textResults.filter(i => i.type === 'product').length;
+    const blogs    = textResults.filter(i => i.type === 'blog').length;
+    const ba = document.getElementById('badge-all');
+    const bp = document.getElementById('badge-products');
+    const bb = document.getElementById('badge-blog');
+    if (ba) ba.textContent = total    > 0 ? String(total)    : '';
+    if (bp) bp.textContent = products > 0 ? String(products) : '';
+    if (bb) bb.textContent = blogs    > 0 ? String(blogs)    : '';
+  }
+
+  function syncFilterRows() {
+    if (state.type === 'blog') {
+      hide(rowColl); hide(rowMat); hide(rowPrice); show(rowBlogCat);
+    } else {
+      show(rowColl); show(rowMat); show(rowPrice); hide(rowBlogCat);
+    }
+  }
+
+  // ── Price slider fill + label sync ─────────────────────────────────
+  function updateSliderFill() {
+    if (!rangeMin || !rangeMax || !priceFill || !priceLabel) return;
+    const min   = parseInt(rangeMin.value);
+    const max   = parseInt(rangeMax.value);
+    const total = sliderMax - sliderMin;
+    const left  = ((min - sliderMin) / total) * 100;
+    const right = ((sliderMax - max) / total) * 100;
+    priceFill.style.left  = left  + '%';
+    priceFill.style.right = right + '%';
+    priceLabel.textContent = `$${min.toLocaleString()} — $${max.toLocaleString()}`;
+    const isDefault = min === sliderMin && max === sliderMax;
+    isDefault ? hide(priceResetBtn) : show(priceResetBtn);
+  }
+
+  function hasActiveFilters() {
+    return state.type !== 'all' || state.collection !== 'all' ||
+           state.material !== 'all' || state.blogcat !== 'all' ||
+           state.priceMin !== sliderMin || state.priceMax !== sliderMax;
+  }
+
+  function applySearch() {
+    const q     = (input?.value ?? '').trim().toLowerCase();
+    const terms = q.split(/\s+/).filter(Boolean);
+
+    // Text match pass
+    let results = terms.length === 0 ? [...INDEX] : INDEX.filter((item) => {
+      const hay = [item.title, item.tags ?? '', item.excerpt ?? '', item.cat ?? '', item.ptype ?? '']
+        .join(' ').toLowerCase();
+      return terms.every((t) => hay.includes(t));
+    });
+
+    // Badges reflect raw text results (before type/collection filtering)
+    updateBadges(results);
+
+    // Filter passes
+    if (state.type !== 'all')       results = results.filter(i => i.type === state.type);
+    if (state.collection !== 'all') results = results.filter(i => i.type !== 'product' || i.bucket === state.collection);
+    if (state.material !== 'all')   results = results.filter(i => i.type !== 'product' || (i.materials ?? []).includes(state.material));
+    if (state.blogcat !== 'all')    results = results.filter(i => i.type !== 'blog'    || i.cat === state.blogcat);
+    // Price filter — products with price===0 ("Contact for price") always pass
+    if (state.priceMin !== sliderMin || state.priceMax !== sliderMax) {
+      results = results.filter(i => i.type !== 'product' || i.price === 0 ||
+        (i.price >= state.priceMin && i.price <= state.priceMax));
+    }
+
+    // Sort
+    if (state.sort === 'az') results.sort((a, b) => a.title.localeCompare(b.title));
+    if (state.sort === 'za') results.sort((a, b) => b.title.localeCompare(a.title));
+
+    // Clear button visibility
+    hasActiveFilters() ? show(clearAllBtn) : hide(clearAllBtn);
+
+    // Initial state (no query, no filters)
+    if (q === '' && !hasActiveFilters()) {
+      show(stateInit); hide(stateEmpty); hide(grid);
+      counter.textContent = '';
+      hide(rowSort);
+      return;
+    }
+
+    hide(stateInit);
+
+    if (results.length === 0) {
+      show(stateEmpty); hide(grid);
+      counter.textContent = 'No results';
+      hide(rowSort);
+      return;
+    }
+
+    hide(stateEmpty); show(grid); show(rowSort);
+    counter.textContent = `${results.length} result${results.length === 1 ? '' : 's'}`;
+    grid.innerHTML = results.slice(0, 60).map(renderItem).join('');
+  }
+
+  function renderItem(item) {
+    return item.type === 'blog' ? renderBlog(item) : renderProduct(item);
+  }
+
+  function renderProduct(item) {
+    const m = item.materials ?? [];
+    let comboLabel = '';
+    if (m.includes('meteorite')) comboLabel = 'Antler + Meteorite';
+    else if (m.includes('dino-bone')) comboLabel = 'Antler + Dino Bone';
+    else if (m.includes('wood'))      comboLabel = 'Antler + Wood';
+    else if (m.includes('turquoise')) comboLabel = 'Antler + Turquoise';
+    else if (m.includes('opal'))      comboLabel = 'Antler + Opal';
+    else if (m.includes('elk'))       comboLabel = 'Elk Antler';
+    else if (m.includes('moose'))     comboLabel = 'Moose Antler';
+    const badge2 = comboLabel ? `<span class="badge-antler">${comboLabel}</span>` : '';
+    return `
+      <article class="card group flex flex-col overflow-hidden">
+        <a href="${item.localUrl}" class="block relative overflow-hidden aspect-square bg-[#162114] shimmer-overlay"
+          aria-label="View details for ${item.title}">
+          <img src="${item.img}" alt="${item.alt}" loading="lazy" decoding="async"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        </a>
+        <div class="p-4 flex flex-col gap-2 flex-1">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="badge-antler">Genuine Antler</span>${badge2}
+          </div>
+          <h3 class="font-serif text-sm text-[#f0ede8] group-hover:text-[#d4b896] transition-colors line-clamp-2">
+            <a href="${item.localUrl}">${item.title}</a>
+          </h3>
+          <p class="text-xs text-[#7a7770]">Free laser engraving · 25 chars</p>
+          <p class="text-sm font-sans font-semibold text-[#d4b896]">${item.price > 0 ? '$' + item.price.toLocaleString() : 'Contact for price'}</p>
+          <div class="mt-auto pt-2 flex flex-col gap-2">
+            <a href="${item.localUrl}" class="btn-outline w-full justify-center text-xs py-2">View Details</a>
+            <a href="${item.jbjUrl}" target="_blank" rel="noopener noreferrer"
+              class="btn-gold w-full justify-center text-xs py-2">Order at Johan ↗</a>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function renderBlog(item) {
+    return `
+      <article class="card group p-6 flex flex-col gap-3">
+        <span class="text-[0.65rem] font-sans font-semibold uppercase tracking-widest text-[#b8860b]">Blog · ${item.cat}</span>
+        <h3 class="font-serif text-base text-[#d4b896] group-hover:text-[#f0ede8] transition-colors leading-snug">
+          <a href="${item.url}">${item.title}</a>
+        </h3>
+        <p class="text-xs text-[#b8b5ae] leading-relaxed flex-1 line-clamp-3">${item.excerpt}</p>
+        <a href="${item.url}" class="text-xs font-sans font-semibold uppercase tracking-wider text-[#b8860b] flex items-center gap-1 mt-auto hover:text-[#d4b896] transition-colors">
+          Read post
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+          </svg>
+        </a>
+      </article>`;
+  }
+
+  // Wire filter buttons
+  document.querySelectorAll('.filter-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const { filter, value } = btn.dataset;
+      if (!filter || !value) return;
+      state[filter] = value;
+      const map = { type: '.type-btn', collection: '.coll-btn', material: '.mat-btn', blogcat: '.bcat-btn', sort: '.sort-btn' };
+      setActive(map[filter], value);
+      if (filter === 'type') {
+        state.collection = 'all'; setActive('.coll-btn', 'all');
+        state.material   = 'all'; setActive('.mat-btn',  'all');
+        state.blogcat    = 'all'; setActive('.bcat-btn', 'all');
+        syncFilterRows();
+      }
+      applySearch();
+    });
+  });
+
+  clearAllBtn?.addEventListener('click', () => {
+    Object.assign(state, { type: 'all', collection: 'all', material: 'all', blogcat: 'all', sort: 'relevance',
+                            priceMin: sliderMin, priceMax: sliderMax });
+    ['.type-btn', '.coll-btn', '.mat-btn', '.bcat-btn'].forEach(s => setActive(s, 'all'));
+    setActive('.sort-btn', 'relevance');
+    if (rangeMin) rangeMin.value = String(sliderMin);
+    if (rangeMax) rangeMax.value = String(sliderMax);
+    updateSliderFill();
+    syncFilterRows();
+    applySearch();
+  });
+
+  // ── Price slider events ────────────────────────────────────────────
+  function onSliderInput() {
+    let min = parseInt(rangeMin?.value ?? String(sliderMin));
+    let max = parseInt(rangeMax?.value ?? String(sliderMax));
+    // Prevent handles from crossing — keep a $25 gap
+    if (min >= max - 25) {
+      min = max - 25;
+      if (rangeMin) rangeMin.value = String(min);
+    }
+    state.priceMin = min;
+    state.priceMax = max;
+    updateSliderFill();
+    applySearch();
+  }
+
+  rangeMin?.addEventListener('input', onSliderInput);
+  rangeMax?.addEventListener('input', onSliderInput);
+
+  priceResetBtn?.addEventListener('click', () => {
+    state.priceMin = sliderMin;
+    state.priceMax = sliderMax;
+    if (rangeMin) rangeMin.value = String(sliderMin);
+    if (rangeMax) rangeMax.value = String(sliderMax);
+    updateSliderFill();
+    applySearch();
+  });
+
+  let timer;
+  input?.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(applySearch, 220); });
+
+  document.querySelectorAll('.suggestion-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (input) { input.value = btn.dataset.term ?? ''; applySearch(); input.focus(); }
+    });
+  });
+
+  const urlQ = new URLSearchParams(window.location.search).get('q');
+  if (urlQ && input) { input.value = urlQ; applySearch(); }
+
+  // Initialise slider fill and filter row visibility
+  updateSliderFill();
+  syncFilterRows();
+</script>

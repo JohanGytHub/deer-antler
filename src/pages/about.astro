@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import TrustBar from '../components/TrustBar.astro';
+---
+
+<BaseLayout
+  title="About Deer Antler Jewelry by Johan | Minneapolis, USA Since 2008"
+  description="Jewelry by Johan has handcrafted deer antler wedding rings in Minneapolis, USA since 2008. Naturally shed antlers, skilled bench jewelers, Ring Armor coating."
+>
+  <Nav />
+
+  <!-- Page header -->
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770]">
+          <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+          <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+          <li class="text-[#d4b896]" aria-current="page">About</li>
+        </ol>
+      </nav>
+      <h1 class="font-serif text-[clamp(2rem,5vw,3.5rem)] text-[#f0ede8] animate-fade-up">
+        About Jewelry by Johan
+      </h1>
+      <p class="text-lg text-[#b8b5ae] mt-4 max-w-2xl animate-fade-up delay-100">
+        Handcrafted in Minneapolis, USA since 2008 — where rugged outdoor tradition meets refined jewelry craft.
+      </p>
+    </div>
+  </header>
+
+  <TrustBar />
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+
+    <!-- Origin story -->
+    <section class="mb-16">
+      <h2 class="font-serif text-[clamp(1.5rem,3vw,2.5rem)] text-[#f0ede8] mb-6">Our Workshop, Our Craft</h2>
+      <div class="prose-antler">
+        <p>
+          Jewelry by Johan was founded in Minneapolis, Minnesota in 2008 with a simple conviction: that the materials of the natural world — meteorite, dinosaur bone, wood, and antler — belong in fine jewelry. What began as a single workshop has grown into a dedicated team of skilled craftsmen and bench jewelers, all working from our Minneapolis studio.
+        </p>
+        <p>
+          Deer antler rings represent everything we believe in. The antlers we use are <strong>naturally shed</strong> — collected after deer, elk, and moose drop them each season. No animals are harmed. Every piece of antler carries the texture, color, and character of the animal that grew it, shaped by years in the wild.
+        </p>
+        <p>
+          When you wear one of our antler rings, you're wearing something no factory could replicate. Our bench jewelers hand-finish every inlay, apply our proprietary <strong>Ring Armor protective coating</strong> for durability and water resistance, and offer free laser engraving up to 25 characters so your ring carries your story too.
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured on Minnesota Bound -->
+    <section class="bg-[#162114] border border-[#2e3d2d] p-8 mb-16 flex flex-col sm:flex-row gap-6 items-start">
+      <div class="flex-shrink-0">
+        <div class="w-14 h-14 rounded-full bg-[#1c2a1b] border border-[#2e3d2d] flex items-center justify-center">
+          <svg class="w-7 h-7 text-[#b8860b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-serif text-xl text-[#d4b896] mb-2">Featured on Minnesota Bound TV</h3>
+        <p class="text-sm text-[#b8b5ae] leading-relaxed">
+          Jewelry by Johan has been featured on <strong class="text-[#f0ede8]">Minnesota Bound</strong>, the iconic outdoor lifestyle television program. It's a recognition that speaks directly to the hunters, anglers, and outdoor enthusiasts who are our community — people who understand that the wild deserves to be celebrated, not just visited.
+        </p>
+      </div>
+    </section>
+
+    <!-- What makes antler special -->
+    <section class="mb-16">
+      <h2 class="font-serif text-[clamp(1.5rem,3vw,2.5rem)] text-[#f0ede8] mb-6">What Makes Deer Antler Special</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {[
+          {
+            title: 'Naturally Shed',
+            body: 'Deer, elk, and moose shed their antlers each year. We collect naturally shed antlers — no hunting, no harm. Every ring starts with ethically sourced material.',
+          },
+          {
+            title: 'One of a Kind',
+            body: 'No two antlers grow identically. The texture, color gradient, and porous pattern in your ring cannot be duplicated in any other piece — anywhere.',
+          },
+          {
+            title: 'Ring Armor Coating',
+            body: 'All antler rings receive our Ring Armor protective sealant — a clear coating that guards against moisture, daily wear, and UV exposure for lasting beauty.',
+          },
+          {
+            title: 'Cannot Be Resized',
+            body: 'Like all inlay rings, antler rings cannot be resized after crafting. We provide a detailed sizing guide and offer a custom ring sizer for $10 to ensure a perfect fit.',
+          },
+          {
+            title: 'Elk & Moose Available',
+            body: 'Larger antler comes from elk and moose — ideal for wider ring styles and sizes 11 and above. Ask about elk or moose antler when placing your order.',
+          },
+          {
+            title: 'Trophy Antler Custom',
+            body: 'Send us your own shed or trophy antler. Our craftsmen will craft it into a ring that carries the memory of your specific harvest or find.',
+          },
+        ].map((item) => (
+          <div class="card p-6">
+            <h3 class="font-serif text-lg text-[#d4b896] mb-2">{item.title}</h3>
+            <p class="text-sm text-[#b8b5ae] leading-relaxed">{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Key facts -->
+    <section class="mb-16">
+      <h2 class="font-serif text-[clamp(1.5rem,3vw,2.5rem)] text-[#f0ede8] mb-6">Jewelry by Johan — Key Facts</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+        {[
+          { num: '2008',  label: 'Year founded' },
+          { num: '15+',   label: 'Years in business' },
+          { num: '269+',  label: 'Antler designs' },
+          { num: '100%',  label: 'Naturally shed antler' },
+        ].map((stat) => (
+          <div class="bg-[#1c2a1b] border border-[#2e3d2d] p-5 text-center">
+            <p class="font-serif text-3xl text-[#d4b896] mb-1">{stat.num}</p>
+            <p class="text-xs font-sans uppercase tracking-wider text-[#7a7770]">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Ordering note -->
+    <section class="bg-[#162114] border border-[#2e3d2d] p-8">
+      <h2 class="font-serif text-2xl text-[#d4b896] mb-4">How to Order</h2>
+      <p class="text-sm text-[#b8b5ae] leading-relaxed mb-4">
+        All orders are placed at <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer" class="text-[#d4b896] hover:underline">jewelrybyjohan.com</a>. This site exists to help you explore the collection and learn about antler jewelry before you order.
+      </p>
+      <p class="text-sm text-[#b8b5ae] leading-relaxed mb-6">
+        <strong class="text-[#f0ede8]">Important:</strong> Antler rings cannot be resized after crafting. Please use our <a href="/sizing-guide" class="text-[#d4b896] hover:underline">sizing guide</a> or order a <a href="https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170" target="_blank" rel="noopener noreferrer" class="text-[#d4b896] hover:underline">custom ring sizer ($10)</a> before placing your order.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="https://jewelrybyjohan.com/collections/deer-antler-rings" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+        <a href="/contact" class="btn-outline">Contact Us</a>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</BaseLayout>

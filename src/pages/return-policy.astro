@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Return Policy | Deer Antler Rings by Jewelry by Johan"
+  description="Return policy for deer antler rings from Jewelry by Johan. Returns accepted for in-store credit only. Antler rings cannot be resized — please read before ordering."
+>
+  <Nav />
+
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770]">
+          <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+          <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+          <li class="text-[#d4b896]" aria-current="page">Return Policy</li>
+        </ol>
+      </nav>
+      <h1 class="font-serif text-[clamp(2rem,5vw,3.5rem)] text-[#f0ede8] animate-fade-up">Return Policy</h1>
+      <p class="text-lg text-[#b8b5ae] mt-4 animate-fade-up delay-100">
+        Please read before placing your order — antler rings cannot be resized after crafting.
+      </p>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+
+    <!-- Key policy summary -->
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+      {[
+        { icon: '💳', title: 'In-Store Credit Only', body: 'Returns are accepted for in-store credit only — not for cash or original payment method refunds.' },
+        { icon: '⚠️', title: 'Cannot Be Resized', body: 'Antler inlay rings cannot be resized after crafting. Please use our sizing guide before ordering.' },
+        { icon: '📋', title: 'RGA Required', body: 'A Return Goods Authorization (RGA) number is required before sending any return. Start at jewelrybyjohan.com.' },
+      ].map((item) => (
+        <div class="card p-6 text-center flex flex-col items-center gap-3">
+          <span class="text-3xl">{item.icon}</span>
+          <h2 class="font-serif text-base text-[#d4b896]">{item.title}</h2>
+          <p class="text-xs text-[#b8b5ae] leading-relaxed">{item.body}</p>
+        </div>
+      ))}
+    </section>
+
+    <!-- Full policy text -->
+    <section class="prose-antler mb-12">
+      <h2>Returns — In-Store Credit</h2>
+      <p>
+        Jewelry by Johan accepts returns for <strong>in-store credit only</strong>. Cash refunds and refunds to the original payment method are not available. In-store credit can be applied to any future purchase at jewelrybyjohan.com.
+      </p>
+
+      <h2>Why Antler Rings Cannot Be Resized</h2>
+      <p>
+        Deer antler inlay rings — like all inlay rings — are crafted with the antler permanently set into the metal band. Attempting to resize the band would destroy the antler inlay. This is not a policy limitation; it is a physical limitation of the craft.
+      </p>
+      <p>
+        For this reason, we strongly encourage every customer to verify their ring size before ordering. Use our <a href="/sizing-guide">ring sizing guide</a> or order a <a href="https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170" target="_blank" rel="noopener noreferrer">custom ring sizer for $10</a> from Jewelry by Johan.
+      </p>
+
+      <h2>How to Start a Return (RGA Process)</h2>
+      <p>
+        To return an item, you must first obtain a Return Goods Authorization (RGA) number. Returns sent without an RGA number cannot be accepted.
+      </p>
+      <p>
+        To request an RGA, visit: <a href="https://jewelrybyjohan.com/pages/returns" target="_blank" rel="noopener noreferrer">jewelrybyjohan.com/pages/returns</a>
+      </p>
+
+      <h2>Condition Requirements</h2>
+      <p>Items must be returned in their original, unworn condition with all original packaging. Engraved items and custom-made items (including trophy antler rings made from customer-supplied antler) are not eligible for return.</p>
+
+      <h2>Custom & Trophy Antler Orders</h2>
+      <p>
+        Rings crafted from customer-supplied trophy antler are <strong>not eligible for return or exchange</strong> as they are one-of-a-kind pieces made to order using the customer's own materials.
+      </p>
+
+      <h2>Questions?</h2>
+      <p>
+        For full return policy details, visit <a href="https://jewelrybyjohan.com/pages/returns" target="_blank" rel="noopener noreferrer">jewelrybyjohan.com/pages/returns</a> or <a href="/contact">contact us</a>.
+      </p>
+    </section>
+
+    <!-- CTA -->
+    <div class="flex flex-wrap gap-4">
+      <a href="https://jewelrybyjohan.com/pages/returns" target="_blank" rel="noopener noreferrer" class="btn-gold">Start a Return at Johan</a>
+      <a href="/sizing-guide" class="btn-outline">Ring Sizing Guide</a>
+    </div>
+
+  </main>
+
+  <Footer />
+</BaseLayout>

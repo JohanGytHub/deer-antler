@@ -1,0 +1,125 @@
+---
+/**
+ * CollectionLayout.astro
+ * Wraps all 8 collection pages.
+ * - Passes BreadcrumbList schema to BaseLayout via breadcrumbs prop
+ * - Renders Nav + Footer
+ * - Provides consistent page header and product grid wrapper
+ */
+import BaseLayout from './BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import TrustBar from '../components/TrustBar.astro';
+
+export interface Props {
+  /** Page <title> — 50–60 chars */
+  title: string;
+  /** Meta description — 150–160 chars */
+  description: string;
+  /** Collection display heading (h1) */
+  heading: string;
+  /** Subheading / intro sentence shown under h1 */
+  subheading?: string;
+  /** OG image override */
+  ogImage?: string;
+  /** Collection name used in breadcrumb, e.g. "Deer Antler Rings" */
+  collectionName: string;
+  /** URL path for this collection, e.g. "/rings" */
+  collectionPath: string;
+  /** Total product count — shown in heading area */
+  productCount?: number;
+}
+
+const SITE_URL = 'https://deer-antler.jewelry';
+
+const {
+  title,
+  description,
+  heading,
+  subheading,
+  ogImage,
+  collectionName,
+  collectionPath,
+  productCount,
+} = Astro.props;
+
+const breadcrumbs = [
+  { name: 'Home',         item: SITE_URL + '/' },
+  { name: collectionName, item: SITE_URL + collectionPath },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  breadcrumbs={breadcrumbs}
+>
+  <Nav />
+
+  <!-- Collection hero header -->
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-12 sm:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Breadcrumb nav -->
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770]">
+          <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+          <li aria-hidden="true">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </li>
+          <li class="text-[#d4b896]" aria-current="page">{collectionName}</li>
+        </ol>
+      </nav>
+
+      <!-- Heading -->
+      <div class="max-w-3xl">
+        <h1 class="font-serif text-[clamp(2rem,5vw,3.5rem)] text-[#f0ede8] leading-tight mb-4 animate-fade-up">
+          {heading}
+        </h1>
+        {subheading && (
+          <p class="text-base sm:text-lg text-[#b8b5ae] leading-relaxed animate-fade-up delay-100 max-w-2xl">
+            {subheading}
+          </p>
+        )}
+        {productCount !== undefined && productCount > 0 && (
+          <p class="mt-3 text-sm text-[#7a7770] animate-fade-up delay-200">
+            {productCount} {productCount === 1 ? 'piece' : 'pieces'} available
+          </p>
+        )}
+      </div>
+
+    </div>
+  </header>
+
+  <!-- TrustBar -->
+  <TrustBar />
+
+  <!-- Products grid slot -->
+  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <slot />
+  </main>
+
+  <!-- CTA band -->
+  <section class="bg-[#162114] border-t border-[#2e3d2d] py-14">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <p class="font-serif text-2xl sm:text-3xl text-[#d4b896] mb-3">Every antler tells a story.</p>
+      <p class="text-sm text-[#b8b5ae] mb-6 leading-relaxed">
+        All orders are placed at Jewelry by Johan — handcrafted in Minneapolis, USA.
+        Free laser engraving up to 25 characters included with every ring.
+      </p>
+      <a
+        href="https://jewelrybyjohan.com/collections/deer-antler-rings"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-gold"
+      >
+        Explore Full Collection at Johan
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>

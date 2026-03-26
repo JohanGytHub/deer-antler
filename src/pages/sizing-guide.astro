@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Ring Sizing Guide for Deer Antler Rings | Cannot Be Resized"
+  description="How to find your correct ring size before ordering a deer antler ring. Antler rings cannot be resized — use our sizing guide or order a custom ring sizer for $10."
+>
+  <Nav />
+
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770]">
+          <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+          <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+          <li class="text-[#d4b896]" aria-current="page">Sizing Guide</li>
+        </ol>
+      </nav>
+      <div class="inline-flex items-center gap-2 bg-[#b8860b]/10 border border-[#b8860b]/30 px-4 py-2 mb-5">
+        <svg class="w-4 h-4 text-[#b8860b] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        <p class="text-xs font-sans font-semibold text-[#b8860b]">Antler rings cannot be resized — please read this guide before ordering.</p>
+      </div>
+      <h1 class="font-serif text-[clamp(2rem,5vw,3.5rem)] text-[#f0ede8] animate-fade-up">Ring Sizing Guide</h1>
+      <p class="text-lg text-[#b8b5ae] mt-4 animate-fade-up delay-100">Get your size right the first time — antler inlay rings cannot be adjusted after crafting.</p>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+
+    <!-- Ring sizer CTA -->
+    <section class="bg-[#1c2a1b] border border-[#b8860b]/30 p-6 mb-12 flex flex-col sm:flex-row gap-5 items-start">
+      <div class="flex-1">
+        <h2 class="font-serif text-xl text-[#d4b896] mb-2">Order a Custom Ring Sizer — $10</h2>
+        <p class="text-sm text-[#b8b5ae] leading-relaxed mb-1">
+          The most accurate way to find your size is with a physical ring sizer made to match our ring profiles. We offer a <strong class="text-[#f0ede8]">custom-made ring sizer for $10</strong> — shipped to you before you place your ring order.
+        </p>
+        <p class="text-xs text-[#7a7770]">Strongly recommended for antler rings — cannot be resized after crafting.</p>
+      </div>
+      <a href="https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170"
+        target="_blank" rel="noopener noreferrer"
+        class="btn-gold text-sm flex-shrink-0 whitespace-nowrap">
+        Order Ring Sizer ($10)
+      </a>
+    </section>
+
+    <!-- US Ring Size Chart -->
+    <section class="mb-12">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-5">US Ring Size Chart</h2>
+      <p class="text-sm text-[#b8b5ae] mb-5 leading-relaxed">Ring sizes are based on the inner circumference of the band. Use the chart below to find your US size from a measurement in millimeters.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm font-sans border-collapse">
+          <thead>
+            <tr class="bg-[#1c2a1b] border-b border-[#2e3d2d]">
+              <th class="text-left px-4 py-3 text-[#7a7770] font-semibold uppercase tracking-wider text-xs">US Size</th>
+              <th class="text-left px-4 py-3 text-[#7a7770] font-semibold uppercase tracking-wider text-xs">Inner Diameter (mm)</th>
+              <th class="text-left px-4 py-3 text-[#7a7770] font-semibold uppercase tracking-wider text-xs">Inner Circumference (mm)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['5',  '15.7', '49.3'],
+              ['5.5','16.1', '50.6'],
+              ['6',  '16.5', '51.9'],
+              ['6.5','16.9', '53.1'],
+              ['7',  '17.3', '54.4'],
+              ['7.5','17.7', '55.7'],
+              ['8',  '18.2', '57.2'],
+              ['8.5','18.6', '58.3'],
+              ['9',  '19.0', '59.5'],
+              ['9.5','19.4', '60.9'],
+              ['10', '19.8', '62.1'],
+              ['10.5','20.2','63.4'],
+              ['11', '20.6', '64.7'],
+              ['11.5','21.0','65.9'],
+              ['12', '21.4', '67.2'],
+              ['12.5','21.8','68.5'],
+              ['13', '22.2', '69.7'],
+            ].map(([size, dia, circ], i) => (
+              <tr class={`border-b border-[#2e3d2d] ${i % 2 === 0 ? 'bg-[#162114]' : 'bg-[#1c2a1b]/40'}`}>
+                <td class="px-4 py-3 text-[#d4b896] font-semibold">{size}</td>
+                <td class="px-4 py-3 text-[#b8b5ae]">{dia} mm</td>
+                <td class="px-4 py-3 text-[#b8b5ae]">{circ} mm</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- How to measure -->
+    <section class="mb-12">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-5">How to Measure at Home</h2>
+      <div class="space-y-4">
+        {[
+          { step: '1', title: 'String or paper strip method', body: 'Cut a thin strip of paper or use a piece of string. Wrap it snugly around the base of the finger you plan to wear the ring on. Mark where it overlaps, then lay it flat and measure the length in millimeters. Match to the circumference column above.' },
+          { step: '2', title: 'Measure an existing ring', body: 'If you own a ring that fits well, measure its inner diameter in millimeters using a ruler. Match to the Inner Diameter column above.' },
+          { step: '3', title: 'Measure at the right time', body: 'Fingers expand and contract throughout the day and with temperature. Measure in the afternoon when your fingers are at their largest. Avoid measuring first thing in the morning or in cold weather.' },
+          { step: '4', title: 'Consider ring width', body: 'Wider rings (8mm+) fit slightly tighter than narrow rings. If you are between sizes and selecting a wide band, consider going up half a size.' },
+        ].map((item) => (
+          <div class="flex gap-4 items-start card p-5">
+            <span class="font-serif text-2xl text-[#b8860b] font-semibold leading-none w-8 flex-shrink-0">{item.step}</span>
+            <div>
+              <h3 class="font-serif text-base text-[#d4b896] mb-1">{item.title}</h3>
+              <p class="text-sm text-[#b8b5ae] leading-relaxed">{item.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Cannot resize warning -->
+    <section class="bg-[#162114] border border-[#2e3d2d] p-7 mb-12">
+      <h2 class="font-serif text-xl text-[#d4b896] mb-3">⚠️ Antler Rings Cannot Be Resized</h2>
+      <div class="prose-antler text-sm">
+        <p>Deer antler inlay rings — like all inlay rings — cannot be resized after they are crafted. The antler inlay is set into the metal band permanently; attempting to resize the band would destroy the inlay.</p>
+        <p>This is why getting your size right before ordering is so important. We strongly recommend ordering our <a href="https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170" target="_blank" rel="noopener noreferrer">custom ring sizer ($10)</a> if you have any doubt about your size.</p>
+        <p>If you have additional questions about sizing, please <a href="/contact">contact us</a> before placing your order.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section>
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-6">Sizing FAQ</h2>
+      <div class="space-y-4">
+        {[
+          { q: 'What if I\'m between sizes?', a: 'For comfort fit rings (rounded interior), go with your true size. For standard fit rings, go up half a size if you are between sizes and have a wide knuckle.' },
+          { q: 'Do elk and moose antler rings come in larger sizes?', a: 'Yes — elk and moose antler is larger and suitable for rings in sizes 11 and above. Specify your preference when ordering at Jewelry by Johan.' },
+          { q: 'Can I exchange a ring that doesn\'t fit?', a: 'We accept returns for in-store credit only. Since antler rings cannot be resized, please measure carefully before ordering. See our return policy for full details.' },
+          { q: 'Is the $10 ring sizer refunded with purchase?', a: 'Please contact Jewelry by Johan directly for current ring sizer policies — visit jewelrybyjohan.com/pages/contact-us.' },
+        ].map((item) => (
+          <details class="card p-5 group">
+            <summary class="font-serif text-base text-[#d4b896] cursor-pointer list-none flex items-center justify-between gap-4">
+              {item.q}
+              <svg class="w-4 h-4 text-[#7a7770] flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </summary>
+            <p class="text-sm text-[#b8b5ae] leading-relaxed mt-3 border-t border-[#2e3d2d] pt-3">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</BaseLayout>

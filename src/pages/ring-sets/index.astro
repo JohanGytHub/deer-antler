@@ -1,0 +1,47 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, filterByCollection } from '../../data/products';
+
+const allProducts = await fetchProducts();
+const products = filterByCollection(allProducts, ['Ring Sets', 'Ring Set']);
+---
+
+<CollectionLayout
+  title="His and Hers Deer Antler Ring Sets | Antler Couples Rings"
+  description="Matching his and hers deer antler ring sets handcrafted in Minneapolis, USA. Naturally shed antler wedding band sets for couples. Cannot be resized — size carefully."
+  heading="Deer Antler Ring Sets"
+  subheading="Matching his-and-hers antler ring sets for couples who share a love of the outdoors. Each set is handcrafted to complement each other — naturally wild, perfectly paired."
+  collectionName="Ring Sets"
+  collectionPath="/ring-sets"
+  productCount={products.length}
+>
+
+  {products.length > 0 ? (
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+      {products.map((product, i) => (
+        <ProductCard product={product} eager={i < 4} />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">Ring Sets Coming Soon</p>
+      <p class="text-[#b8b5ae] mb-6">Our antler ring sets collection is being prepared. Visit Jewelry by Johan to see all available sets.</p>
+      <a href="https://jewelrybyjohan.com/collections/deer-antler-rings" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+    </div>
+  )}
+
+  <!-- About section -->
+  <section class="mt-16 border-t border-[#2e3d2d] pt-12">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-4">About Deer Antler Ring Sets</h2>
+      <div class="prose-antler text-sm">
+        <p>Our his-and-hers deer antler ring sets are crafted to pair beautifully together while remaining individually distinct — just like the couples who wear them. Each ring in the set is handcrafted from naturally shed antler in our Minneapolis workshop.</p>
+        <p>Sets typically include a wider band for him and a narrower or more delicate band for her, both featuring matching antler material and metal. Free laser engraving up to 25 characters is included for both rings in a set.</p>
+        <p><strong>Important:</strong> All antler rings — including those in sets — cannot be resized after crafting. Both partners should verify their sizes using our <a href="/sizing-guide">ring sizing guide</a> before ordering.</p>
+        <p>Looking for a specific combination — such as antler with meteorite or antler with turquoise — for a set? Contact us at <a href="https://jewelrybyjohan.com/pages/contact-us" target="_blank" rel="noopener noreferrer">Jewelry by Johan</a> to discuss custom set options.</p>
+      </div>
+    </div>
+  </section>
+
+</CollectionLayout>

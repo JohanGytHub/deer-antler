@@ -1,0 +1,57 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, filterByCollection } from '../../data/products';
+
+const allProducts = await fetchProducts();
+const products = filterByCollection(allProducts, ['Tie Clips', 'Tie Clip']);
+---
+
+<CollectionLayout
+  title="Deer Antler Tie Clips | Handcrafted Antler Tie Bars"
+  description="Handcrafted deer antler tie clips and tie bars made in Minneapolis, USA. Naturally shed antler — a distinctive groomsmen gift or personal accessory. Order at Jewelry by Johan."
+  heading="Deer Antler Tie Clips"
+  subheading="A small detail that tells a big story. Our antler tie clips and tie bars are handcrafted in Minneapolis from naturally shed deer antler — rugged character in a refined package."
+  collectionName="Antler Tie Clips"
+  collectionPath="/tie-clips"
+  productCount={products.length}
+>
+
+  {products.length > 0 ? (
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+      {products.map((product, i) => (
+        <ProductCard product={product} eager={i < 4} />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">Tie Clips Coming Soon</p>
+      <p class="text-[#b8b5ae] mb-6">Our antler tie clips collection is being prepared. Visit Jewelry by Johan for availability.</p>
+      <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+    </div>
+  )}
+
+  <!-- Wedding set suggestion -->
+  <section class="mt-12 bg-[#162114] border border-[#2e3d2d] p-7">
+    <h2 class="font-serif text-xl text-[#d4b896] mb-2">Complete the Wedding Day Look</h2>
+    <p class="text-sm text-[#b8b5ae] leading-relaxed mb-4">
+      Pair a deer antler tie clip with matching antler cufflinks and an antler wedding ring for a cohesive, outdoor-inspired wedding day look. All three can be laser-engraved to match.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href="/cufflinks" class="btn-outline text-xs">Antler Cufflinks</a>
+      <a href="/rings" class="btn-outline text-xs">Antler Rings</a>
+    </div>
+  </section>
+
+  <section class="mt-12 border-t border-[#2e3d2d] pt-12">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-4">About Deer Antler Tie Clips</h2>
+      <div class="prose-antler text-sm">
+        <p>A deer antler tie clip is one of the most understated ways to express an outdoor identity in a formal setting. Handcrafted by our bench jewelers in Minneapolis, each tie clip features a face of naturally shed deer antler in a precision metal setting.</p>
+        <p>The warm ivory tones and organic texture of genuine antler contrast beautifully with the clean lines of a dress shirt and tie — subtle enough for a board meeting, meaningful enough for a wedding day.</p>
+        <p>Antler tie clips pair naturally with our <a href="/cufflinks">antler cufflinks</a> and <a href="/rings">antler wedding rings</a> for a fully coordinated look. Contact us about coordinating a full set for you or your wedding party.</p>
+      </div>
+    </div>
+  </section>
+
+</CollectionLayout>

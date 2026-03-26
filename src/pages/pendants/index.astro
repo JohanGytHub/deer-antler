@@ -1,0 +1,45 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, filterByCollection } from '../../data/products';
+
+const allProducts = await fetchProducts();
+const products = filterByCollection(allProducts, ['Pendants', 'Necklaces']);
+---
+
+<CollectionLayout
+  title="Deer Antler Pendants & Necklaces | Handcrafted Antler Jewelry"
+  description="Handcrafted deer antler pendants and necklaces made in Minneapolis, USA. Naturally shed antler — ethically sourced, unique, and finished by skilled bench jewelers."
+  heading="Deer Antler Pendants & Necklaces"
+  subheading="Carry a piece of the wild with you. Our antler pendants and necklaces are handcrafted from naturally shed deer antler in Minneapolis — each one a wearable story."
+  collectionName="Antler Pendants"
+  collectionPath="/pendants"
+  productCount={products.length}
+>
+
+  {products.length > 0 ? (
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+      {products.map((product, i) => (
+        <ProductCard product={product} eager={i < 4} />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">Pendants Coming Soon</p>
+      <p class="text-[#b8b5ae] mb-6">Our antler pendants collection is being prepared. Visit Jewelry by Johan for availability.</p>
+      <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+    </div>
+  )}
+
+  <section class="mt-16 border-t border-[#2e3d2d] pt-12">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-4">About Deer Antler Pendants</h2>
+      <div class="prose-antler text-sm">
+        <p>Our deer antler pendants and necklaces bring the organic beauty of naturally shed antler into an everyday wearable form. Each pendant is individually crafted by our bench jewelers in Minneapolis, using antler that has been ethically collected — never hunted for.</p>
+        <p>Antler pendants can be paired with chains in sterling silver, gold-filled, or other metals to suit your style. The natural cellular texture of deer antler catches light in a way no manufactured material can replicate, giving each pendant a depth and warmth that is entirely its own.</p>
+        <p>Looking for a pendant made from your own trophy antler? Contact us about our <a href="/custom">trophy antler custom</a> options — we can craft pendants from customer-supplied antler just as we do with rings.</p>
+      </div>
+    </div>
+  </section>
+
+</CollectionLayout>

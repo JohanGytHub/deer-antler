@@ -1,0 +1,45 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, filterByCollection } from '../../data/products';
+
+const allProducts = await fetchProducts();
+const products = filterByCollection(allProducts, 'Earrings');
+---
+
+<CollectionLayout
+  title="Deer Antler Earrings | Handcrafted Antler Jewelry"
+  description="Handcrafted deer antler earrings made in Minneapolis, USA. Naturally shed antler earrings — unique, lightweight, and ethically sourced. Order at Jewelry by Johan."
+  heading="Deer Antler Earrings"
+  subheading="Bring the natural beauty of deer antler into everyday wear. Each pair is handcrafted from naturally shed antler in our Minneapolis workshop — lightweight, unique, and wild."
+  collectionName="Antler Earrings"
+  collectionPath="/earrings"
+  productCount={products.length}
+>
+
+  {products.length > 0 ? (
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+      {products.map((product, i) => (
+        <ProductCard product={product} eager={i < 4} />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">Earrings Coming Soon</p>
+      <p class="text-[#b8b5ae] mb-6">Our antler earrings collection is being prepared. Visit Jewelry by Johan for availability.</p>
+      <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+    </div>
+  )}
+
+  <section class="mt-16 border-t border-[#2e3d2d] pt-12">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-4">About Deer Antler Earrings</h2>
+      <div class="prose-antler text-sm">
+        <p>Deer antler earrings offer a subtle way to carry the beauty of the natural world with you every day. Each pair features naturally shed antler — ethically sourced with no animals harmed — hand-finished by our bench jewelers in Minneapolis.</p>
+        <p>The warm ivory and cream tones of deer antler pair beautifully with gold and silver settings, making these earrings equally at home at a formal occasion or a day outdoors. No two pairs are identical, as each piece of antler has its own unique grain and color.</p>
+        <p>All antler earrings are treated with our Ring Armor protective coating for lasting durability. Free laser engraving is available on select earring styles — contact us for details.</p>
+      </div>
+    </div>
+  </section>
+
+</CollectionLayout>

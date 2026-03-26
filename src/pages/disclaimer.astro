@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Content Disclaimer | deer-antler.jewelry"
+  description="Content disclaimer for deer-antler.jewelry — AI-assisted content, accuracy notice, and affiliate disclosure."
+  noindex={true}
+>
+  <Nav />
+
+  <header class="bg-[#162114] border-b border-[#2e3d2d] py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770]">
+          <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+          <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+          <li class="text-[#d4b896]" aria-current="page">Disclaimer</li>
+        </ol>
+      </nav>
+      <h1 class="font-serif text-[clamp(2rem,5vw,3.5rem)] text-[#f0ede8] animate-fade-up">Content Disclaimer</h1>
+      <p class="text-sm text-[#7a7770] mt-3">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+    <div class="prose-antler">
+
+      <h2>About This Site</h2>
+      <p>
+        deer-antler.jewelry is an informational website operated by Jewelry by Johan. The purpose of this site is to help customers discover and learn about deer antler jewelry before visiting the main store at <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer">jewelrybyjohan.com</a> to place an order.
+      </p>
+      <p>
+        This site does not process orders, accept payments, or store customer data. All transactions occur at jewelrybyjohan.com.
+      </p>
+
+      <h2>AI-Assisted Content</h2>
+      <p>
+        Some content on this site — including blog posts and product descriptions — was created with the assistance of artificial intelligence writing tools. All AI-assisted content is reviewed for accuracy before publication; however, we cannot guarantee that every detail is current or error-free.
+      </p>
+      <p>
+        For the most accurate and up-to-date product information, pricing, availability, and policies, always refer to <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer">jewelrybyjohan.com</a> or <a href="/contact">contact us directly</a>.
+      </p>
+
+      <h2>Product Information Accuracy</h2>
+      <p>
+        Product descriptions, specifications, and availability on this site are drawn from product data at the time of the site's last build. Product inventory, prices, and availability change regularly at Jewelry by Johan. Always verify current details at jewelrybyjohan.com before placing an order.
+      </p>
+
+      <h2>No Pricing Displayed</h2>
+      <p>
+        This site intentionally does not display product prices. For current pricing, please visit <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer">jewelrybyjohan.com</a>.
+      </p>
+
+      <h2>Important Product Notice</h2>
+      <p>
+        Deer antler inlay rings <strong>cannot be resized</strong> after crafting. This is a physical limitation, not a policy. Please use our <a href="/sizing-guide">ring sizing guide</a> or order a <a href="https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170" target="_blank" rel="noopener noreferrer">custom ring sizer</a> before placing your order.
+      </p>
+
+      <h2>External Links</h2>
+      <p>
+        Links on this site that point to jewelrybyjohan.com and other external websites are provided for your convenience. We are not responsible for the content or accuracy of external sites.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        If you find an error or have a question about content on this site, please <a href="/contact">contact us</a> or reach out directly at <a href="https://jewelrybyjohan.com/pages/contact-us" target="_blank" rel="noopener noreferrer">jewelrybyjohan.com/pages/contact-us</a>.
+      </p>
+
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

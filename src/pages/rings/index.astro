@@ -1,0 +1,96 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, filterByCollection } from '../../data/products';
+
+const allProducts = await fetchProducts();
+const products = filterByCollection(allProducts, ['Rings', 'In Stock Wedding Bands']);
+---
+
+<CollectionLayout
+  title="Deer Antler Wedding Rings | Antler Wedding Bands"
+  description="Handcrafted deer antler wedding rings and bands made in Minneapolis, USA. Naturally shed antler, Ring Armor coating, free laser engraving. Cannot be resized — size carefully."
+  heading="Deer Antler Wedding Rings"
+  subheading="Naturally shed deer antler handcrafted into wedding rings by our skilled bench jewelers in Minneapolis, USA. Every ring is unique — no two antlers are alike."
+  collectionName="Deer Antler Rings"
+  collectionPath="/rings"
+  productCount={products.length}
+>
+
+  <!-- Filter hint -->
+  <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex flex-wrap gap-2">
+      {['All', 'Meteorite', 'Dinosaur Bone', 'Turquoise', 'Wood', 'Elk / Moose'].map((label, i) => (
+        <button
+          data-filter={label === 'All' ? 'all' : label.toLowerCase()}
+          class={`filter-btn px-3 py-1.5 text-xs font-sans font-medium border transition-colors duration-150 ${i === 0 ? 'border-[#b8860b] text-[#b8860b] bg-[#b8860b]/10' : 'border-[#2e3d2d] text-[#7a7770] hover:border-[#b8860b] hover:text-[#d4b896]'}`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+    <p class="text-xs text-[#7a7770]">
+      ⚠️ Rings cannot be resized — <a href="/sizing-guide" class="text-[#d4b896] hover:underline">check your size first</a>
+    </p>
+  </div>
+
+  <!-- Products grid -->
+  {products.length > 0 ? (
+    <div id="product-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+      {products.map((product, i) => (
+        <div data-title={product.title.toLowerCase()} data-tags={product.tags.join(',').toLowerCase()}>
+          <ProductCard product={product} eager={i < 8} />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">Collection Coming Soon</p>
+      <p class="text-[#b8b5ae] mb-6">Our antler ring collection is being prepared. Visit Jewelry by Johan to see all available rings.</p>
+      <a href="https://jewelrybyjohan.com/collections/deer-antler-rings" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+    </div>
+  )}
+
+  <!-- About this collection -->
+  <section class="mt-16 border-t border-[#2e3d2d] pt-12">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-4">About Deer Antler Wedding Rings</h2>
+      <div class="prose-antler text-sm">
+        <p>Deer antler wedding rings are one of the most distinctive choices in men's and women's alternative wedding jewelry. Each ring features a slice or inlay of naturally shed deer antler — ethically sourced with no animals harmed — set into a metal band of your choice.</p>
+        <p>The antler's natural ivory and cream tones, its porous cellular texture, and its warm earthy color gradients make every ring completely one-of-a-kind. Our bench jewelers apply a <strong>Ring Armor protective coating</strong> to every antler ring for water resistance and lasting durability.</p>
+        <p><strong>Important:</strong> Antler inlay rings cannot be resized after crafting. Please use our <a href="/sizing-guide">ring sizing guide</a> or order a <a href="https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170" target="_blank" rel="noopener noreferrer">custom ring sizer ($10)</a> before placing your order. Free laser engraving up to 25 characters is included with every ring.</p>
+        <p>We also offer elk and moose antler for larger ring sizes (11+), and combination rings pairing antler with meteorite, dinosaur bone, turquoise, opal, and wood. Have your own trophy antler? See our <a href="/custom">trophy antler custom rings</a> page.</p>
+      </div>
+    </div>
+  </section>
+
+</CollectionLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const cards   = document.querySelectorAll<HTMLElement>('#product-grid > div');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter ?? 'all';
+
+      buttons.forEach((b) => {
+        b.classList.remove('border-[#b8860b]', 'text-[#b8860b]', 'bg-[#b8860b]/10');
+        b.classList.add('border-[#2e3d2d]', 'text-[#7a7770]');
+      });
+      btn.classList.add('border-[#b8860b]', 'text-[#b8860b]', 'bg-[#b8860b]/10');
+      btn.classList.remove('border-[#2e3d2d]', 'text-[#7a7770]');
+
+      cards.forEach((card) => {
+        if (filter === 'all') {
+          card.style.display = '';
+          return;
+        }
+        const title = card.dataset.title ?? '';
+        const tags  = card.dataset.tags ?? '';
+        const match = title.includes(filter) || tags.includes(filter);
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  });
+</script>

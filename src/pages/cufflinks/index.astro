@@ -1,0 +1,60 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { fetchProducts, filterByCollection } from '../../data/products';
+
+const allProducts = await fetchProducts();
+const products = filterByCollection(allProducts, 'Cufflinks');
+---
+
+<CollectionLayout
+  title="Deer Antler Cufflinks | Handcrafted Antler Cufflinks"
+  description="Handcrafted deer antler cufflinks made in Minneapolis, USA. Naturally shed antler set in metal — a distinguished gift for groomsmen or any occasion. Order at Jewelry by Johan."
+  heading="Deer Antler Cufflinks"
+  subheading="A distinguished finishing touch for any formal occasion. Our antler cufflinks are handcrafted from naturally shed deer antler — rugged heritage meets refined detail."
+  collectionName="Antler Cufflinks"
+  collectionPath="/cufflinks"
+  productCount={products.length}
+>
+
+  {products.length > 0 ? (
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+      {products.map((product, i) => (
+        <ProductCard product={product} eager={i < 4} />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-20">
+      <p class="font-serif text-2xl text-[#d4b896] mb-3">Cufflinks Coming Soon</p>
+      <p class="text-[#b8b5ae] mb-6">Our antler cufflinks collection is being prepared. Visit Jewelry by Johan for availability.</p>
+      <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer" class="btn-gold">View at Jewelry by Johan</a>
+    </div>
+  )}
+
+  <!-- Groomsmen gift callout -->
+  <section class="mt-12 bg-[#162114] border border-[#2e3d2d] p-7">
+    <div class="flex flex-col sm:flex-row gap-5 items-start">
+      <div class="flex-1">
+        <h2 class="font-serif text-xl text-[#d4b896] mb-2">The Perfect Groomsmen Gift</h2>
+        <p class="text-sm text-[#b8b5ae] leading-relaxed">
+          Deer antler cufflinks make an exceptional groomsmen gift — meaningful, handcrafted, and unlike anything available at a department store. Each pair can be laser-engraved with initials or a short message. Contact Jewelry by Johan for group order inquiries.
+        </p>
+      </div>
+      <a href="https://jewelrybyjohan.com/pages/contact-us" target="_blank" rel="noopener noreferrer" class="btn-outline text-sm flex-shrink-0 whitespace-nowrap">
+        Inquire About Group Orders
+      </a>
+    </div>
+  </section>
+
+  <section class="mt-12 border-t border-[#2e3d2d] pt-12">
+    <div class="max-w-3xl">
+      <h2 class="font-serif text-2xl text-[#f0ede8] mb-4">About Deer Antler Cufflinks</h2>
+      <div class="prose-antler text-sm">
+        <p>Our deer antler cufflinks pair the organic warmth of naturally shed antler with precision metal work — the result is a cufflink that stands apart from standard options. Each face features a slice of genuine deer antler, finished and sealed by our bench jewelers in Minneapolis.</p>
+        <p>Available in silver and gold-toned settings, deer antler cufflinks complement both formal and smart-casual attire. They make an excellent wedding day accessory for the groom and groomsmen, or a distinctive gift for any occasion that calls for something personal and handcrafted.</p>
+        <p>As with all antler pieces, no two pairs are exactly alike. The antler's natural texture, color, and cellular pattern vary from piece to piece — each pair is genuinely unique.</p>
+      </div>
+    </div>
+  </section>
+
+</CollectionLayout>

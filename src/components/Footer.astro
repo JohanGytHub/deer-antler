@@ -1,0 +1,154 @@
+---
+const currentYear = new Date().getFullYear();
+
+const collections = [
+  { href: '/rings',     label: 'Antler Rings' },
+  { href: '/ring-sets', label: 'Ring Sets' },
+  { href: '/earrings',  label: 'Earrings' },
+  { href: '/pendants',  label: 'Pendants' },
+  { href: '/cufflinks', label: 'Cufflinks' },
+  { href: '/tie-clips', label: 'Tie Clips' },
+  { href: '/unique',    label: 'Unique Pieces' },
+  { href: '/custom',    label: 'Trophy Antler Custom' },
+];
+
+const info = [
+  { href: '/about',        label: 'About Jewelry by Johan' },
+  { href: '/sizing-guide', label: 'Ring Sizing Guide' },
+  { href: '/blog',         label: 'Blog' },
+  { href: '/contact',      label: 'Contact' },
+  { href: '/return-policy',label: 'Return Policy' },
+  { href: '/disclaimer',   label: 'Content Disclaimer' },
+];
+
+const store = [
+  { href: 'https://jewelrybyjohan.com/collections/deer-antler-rings', label: 'All Antler Rings', external: true },
+  { href: 'https://jewelrybyjohan.com/products/ring-sizer-custom-made-1170', label: 'Order a Ring Sizer ($10)', external: true },
+  { href: 'https://jewelrybyjohan.com/pages/faqs', label: 'FAQs', external: true },
+  { href: 'https://jewelrybyjohan.com/pages/returns', label: 'Returns & RGA', external: true },
+  { href: 'https://jewelrybyjohan.com/pages/contact-us', label: 'Custom Order Inquiry', external: true },
+];
+---
+
+<footer class="mt-auto border-t border-[#2e3d2d]">
+
+  <!-- Main footer grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+
+      <!-- Brand column -->
+      <div class="lg:col-span-1">
+        <a href="/" class="flex items-center gap-3 mb-5 group w-fit">
+          <img src="/favicon.svg" alt="" width="36" height="36" class="w-9 h-9" aria-hidden="true" />
+          <span class="font-serif text-xl text-[#d4b896]">Deer Antler</span>
+        </a>
+        <p class="text-sm text-[#b8b5ae] leading-relaxed mb-5">
+          Naturally shed. Ethically sourced. Handcrafted in Minneapolis, USA since 2008.
+        </p>
+        <p class="text-sm text-[#b8b5ae] leading-relaxed mb-5">
+          Every antler ring is custom made by our skilled bench jewelers — no two alike.
+        </p>
+        <!-- Badges -->
+        <div class="flex flex-wrap gap-2">
+          <span class="badge-antler">Natural Antler</span>
+          <span class="badge-antler">Made in USA</span>
+          <span class="badge-antler">Since 2008</span>
+        </div>
+      </div>
+
+      <!-- Collections column — h3, NOT h4 -->
+      <div>
+        <h3 class="text-xs font-sans font-semibold tracking-[0.12em] uppercase text-[#7a7770] mb-4">
+          Explore by Category
+        </h3>
+        <ul class="space-y-2">
+          {collections.map((link) => (
+            <li>
+              <a href={link.href}
+                class="text-sm text-[#b8b5ae] hover:text-[#d4b896] transition-colors duration-150">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Info column — h3, NOT h4 -->
+      <div>
+        <h3 class="text-xs font-sans font-semibold tracking-[0.12em] uppercase text-[#7a7770] mb-4">
+          Information
+        </h3>
+        <ul class="space-y-2">
+          {info.map((link) => (
+            <li>
+              <a href={link.href}
+                class="text-sm text-[#b8b5ae] hover:text-[#d4b896] transition-colors duration-150">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Store column — h3, NOT h4 -->
+      <div>
+        <h3 class="text-xs font-sans font-semibold tracking-[0.12em] uppercase text-[#7a7770] mb-4">
+          Order at Jewelry by Johan
+        </h3>
+        <ul class="space-y-2 mb-6">
+          {store.map((link) => (
+            <li>
+              <a href={link.href}
+                target="_blank" rel="noopener noreferrer"
+                class="text-sm text-[#b8b5ae] hover:text-[#d4b896] transition-colors duration-150 inline-flex items-center gap-1">
+                {link.label}
+                <svg class="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <!-- Key policies — no resizing, in-store credit returns -->
+        <div class="bg-[#1c2a1b] border border-[#2e3d2d] p-3 space-y-1.5">
+          <p class="text-[0.7rem] text-[#7a7770] leading-snug">
+            ⚠️ Antler rings <strong class="text-[#b8b5ae]">cannot be resized</strong> — order your correct size using our <a href="/sizing-guide" class="text-[#d4b896] hover:underline">sizing guide</a>.
+          </p>
+          <p class="text-[0.7rem] text-[#7a7770] leading-snug">
+            Returns are accepted for <strong class="text-[#b8b5ae]">in-store credit only</strong>. See our <a href="/return-policy" class="text-[#d4b896] hover:underline">return policy</a>.
+          </p>
+          <p class="text-[0.7rem] text-[#7a7770] leading-snug">
+            Free laser engraving up to <strong class="text-[#b8b5ae]">25 characters</strong> with font choice on all rings.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Gold divider -->
+  <hr class="divider-gold mx-4 sm:mx-8" />
+
+  <!-- Bottom bar -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-xs text-[#7a7770]">
+        &copy; {currentYear} <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#d4b896] transition-colors">Jewelry by Johan</a>. All rights reserved.
+        Handcrafted in Minneapolis, USA.
+      </p>
+      <div class="flex items-center gap-4">
+        <a href="https://jewelrybyjohan.com" target="_blank" rel="noopener noreferrer"
+          class="text-xs text-[#7a7770] hover:text-[#d4b896] transition-colors">
+          jewelrybyjohan.com
+        </a>
+        <span class="text-[#2e3d2d]">|</span>
+        <a href="https://meteorite.jewelry" target="_blank" rel="noopener noreferrer"
+          class="text-xs text-[#7a7770] hover:text-[#d4b896] transition-colors">
+          meteorite.jewelry
+        </a>
+      </div>
+    </div>
+  </div>
+
+</footer>

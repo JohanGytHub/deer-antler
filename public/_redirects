@@ -1,0 +1,3 @@
+# Cloudflare Pages redirects for deer-antler.jewelry
+# Alternate domain 301 redirects are handled in Cloudflare Bulk Redirects (dashboard).
+# No SPA fallback needed — this is a static Astro site.

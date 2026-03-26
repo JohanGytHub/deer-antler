@@ -1,0 +1,531 @@
+---
+/**
+ * BaseLayout.astro
+ * Root layout for every page on deer-antler.jewelry
+ *
+ * Features:
+ * - Async Google Fonts (no render-blocking)
+ * - CSS design tokens (forest green / earth / antler palette)
+ * - Organization JSON-LD schema on every page
+ * - Open Graph + Twitter Card meta
+ * - Canonical URL support (cross-domain canonical on product pages)
+ */
+
+export interface Props {
+  /** Page <title> — keep 50–60 chars */
+  title: string;
+  /** Meta description — keep 150–160 chars */
+  description: string;
+  /** Canonical URL. For product pages pass the jewelrybyjohan.com URL.
+   *  For all other pages omit — BaseLayout uses the current page URL. */
+  canonicalUrl?: string;
+  /** OG image URL (1200×630). Falls back to /og-default.jpg */
+  ogImage?: string;
+  /** Extra <head> content */
+  headExtra?: string;
+  /** Breadcrumb items for BreadcrumbList schema — passed from CollectionLayout */
+  breadcrumbs?: Array<{ name: string; item: string }>;
+  /** noindex — set true on /disclaimer, /404, /search */
+  noindex?: boolean;
+}
+
+const SITE_URL  = 'https://deer-antler.jewelry';
+const SITE_NAME = 'Deer Antler Jewelry by Johan';
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogImage = `${SITE_URL}/og-default.jpg`,
+  noindex = false,
+  breadcrumbs,
+} = Astro.props;
+
+const pageUrl      = canonicalUrl ?? `${SITE_URL}${Astro.url.pathname}`;
+const isProductPage = !!canonicalUrl; // cross-domain canonical supplied
+
+// Organization JSON-LD — on every page
+const organizationSchema = {
+  '@context':  'https://schema.org',
+  '@type':     'Organization',
+  '@id':       'https://jewelrybyjohan.com/#organization',
+  name:        'Jewelry by Johan',
+  url:         'https://jewelrybyjohan.com',
+  logo: {
+    '@type': 'ImageObject',
+    url:     'https://jewelrybyjohan.com/cdn/shop/files/JBJ-logo.png',
+  },
+  sameAs: [
+    'https://www.facebook.com/JewelryByJohan',
+    'https://www.instagram.com/jewelrybyjohan',
+    'https://www.pinterest.com/jewelrybyjohan',
+    'https://www.youtube.com/@JewelryByJohan',
+  ],
+  contactPoint: {
+    '@type':       'ContactPoint',
+    contactType:   'customer service',
+    url:           'https://jewelrybyjohan.com/pages/contact-us',
+  },
+  address: {
+    '@type':           'PostalAddress',
+    addressLocality:   'Minneapolis',
+    addressRegion:     'MN',
+    addressCountry:    'US',
+  },
+  foundingDate: '2008',
+  description:
+    'Handcrafted deer antler wedding rings and jewelry, made in Minneapolis, USA since 2008.',
+};
+
+// BreadcrumbList JSON-LD — only when breadcrumbs prop is supplied
+const breadcrumbSchema = breadcrumbs
+  ? {
+      '@context':    'https://schema.org',
+      '@type':       'BreadcrumbList',
+      itemListElement: breadcrumbs.map((crumb, idx) => ({
+        '@type':   'ListItem',
+        position:  idx + 1,
+        name:      crumb.name,
+        item:      crumb.item,
+      })),
+    }
+  : null;
+
+// Google Fonts URL — Cormorant Garamond + DM Sans
+const FONTS_URL =
+  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap';
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <!-- Anti-flash: apply stored theme before first paint -->
+    <script>
+      (function(){
+        try {
+          var t = localStorage.getItem('da-theme');
+          if (t === 'light') document.documentElement.classList.add('light');
+        } catch(_) {}
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary meta -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex
+      ? <meta name="robots" content="noindex,follow" />
+      : <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+    }
+
+    <!-- Canonical -->
+    <link rel="canonical" href={pageUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={pageUrl} />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name"   content={SITE_NAME} />
+    <meta property="og:locale"      content="en_US" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon"             href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f1a0e" />
+
+    <!-- Google Fonts — async (preload pattern prevents render-blocking) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href={FONTS_URL}
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href={FONTS_URL} />
+    </noscript>
+
+    <!-- Organization schema — every page -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+
+    <!-- BreadcrumbList schema — collection + product pages only -->
+    {breadcrumbSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    )}
+
+    <!-- Slot for page-specific <head> additions (e.g. Product schema) -->
+    <slot name="head" />
+  </head>
+
+  <body class="font-sans antialiased" style="background-color:var(--c-bg);color:var(--c-text)">
+    <!-- Subtle noise overlay — forest texture feel -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none fixed inset-0 z-0 opacity-[0.035]"
+      style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E\");background-repeat:repeat;"
+    ></div>
+
+    <!-- Page content -->
+    <div class="relative z-10 flex min-h-screen flex-col">
+      <slot />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  /* ── Design Tokens — Dark (default) ──────────────────────────────── */
+  :root {
+    --c-bg:          #0f1a0e;
+    --c-bg-2:        #162114;
+    --c-surface:     #1c2a1b;
+    --c-surface-2:   #243323;
+    --c-gold:        #b8860b;
+    --c-gold-lt:     #d4a017;
+    --c-antler:      #d4b896;
+    --c-antler-dk:   #a8886a;
+    --c-text:        #f0ede8;
+    --c-text-muted:  #b8b5ae;
+    --c-text-faint:  #7a7770;
+    --c-border:      #2e3d2d;
+    --c-border-gold: rgba(184,134,11,0.25);
+    --font-serif:    "Cormorant Garamond", Georgia, serif;
+    --font-sans:     "DM Sans", system-ui, sans-serif;
+  }
+
+  /* ── Design Tokens — Light ────────────────────────────────────────── */
+  html.light {
+    --c-bg:          #f4efe6;
+    --c-bg-2:        #ece6db;
+    --c-surface:     #ffffff;
+    --c-surface-2:   #f7f2e9;
+    --c-gold:        #8b6200;
+    --c-gold-lt:     #a87900;
+    --c-antler:      #5c3a12;
+    --c-antler-dk:   #7a5230;
+    --c-text:        #1a1208;
+    --c-text-muted:  #4a3828;
+    --c-text-faint:  #8a7a68;
+    --c-border:      #d8cec0;
+    --c-border-gold: rgba(139,98,0,0.22);
+  }
+
+  /* ── Nav component theming ────────────────────────────────────────── */
+
+  /* Backdrop */
+  .nav-backdrop {
+    background-color: rgba(15,26,14,0.92);
+  }
+  html.light .nav-backdrop {
+    background-color: rgba(244,239,230,0.95);
+    border-color: var(--c-border) !important;
+  }
+
+  /* Logo text */
+  .nav-logo-main { color: var(--c-antler); }
+  .nav-logo-sub  { color: var(--c-text-faint); }
+
+  /* Nav links */
+  .nav-link { color: var(--c-text-muted); }
+  .nav-link:hover,
+  .nav-link.active { color: var(--c-antler); }
+
+  /* Icon buttons (search, theme toggle, hamburger) */
+  .nav-icon-btn { color: var(--c-text-faint); }
+  .nav-icon-btn:hover { color: var(--c-antler); }
+
+  /* Dropdown panel */
+  .nav-dropdown {
+    background-color: var(--c-surface);
+    border-color: var(--c-border) !important;
+  }
+  .nav-dropdown-item { color: var(--c-text-muted); }
+  .nav-dropdown-item:hover,
+  .nav-dropdown-item.active {
+    color: var(--c-antler);
+    background-color: var(--c-surface-2);
+  }
+
+  /* Mobile drawer */
+  .mobile-menu {
+    background-color: var(--c-bg);
+    border-color: var(--c-border) !important;
+  }
+  .nav-section-label { color: var(--c-text-faint); }
+  .mobile-nav-item   { color: var(--c-text-muted); }
+  .mobile-nav-item:hover,
+  .mobile-nav-item.active {
+    color: var(--c-antler);
+    background-color: var(--c-surface);
+  }
+
+  /* ── Base ─────────────────────────────────────────────────────────── */
+  html { font-size: 16px; }
+
+  body {
+    font-family:       var(--font-sans);
+    background-color:  var(--c-bg);
+    color:             var(--c-text);
+    -webkit-font-smoothing:  antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Typography ───────────────────────────────────────────────────── */
+  h1, h2, h3, h4, h5, h6 {
+    font-family:    var(--font-serif);
+    color:          var(--c-text);
+    line-height:    1.1;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Gold divider line ────────────────────────────────────────────── */
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--c-gold),
+      transparent
+    );
+    border: none;
+    opacity: 0.5;
+  }
+
+  /* ── Antler badge ─────────────────────────────────────────────────── */
+  .badge-antler {
+    display:         inline-flex;
+    align-items:     center;
+    gap:             0.3rem;
+    padding:         0.2rem 0.6rem;
+    border:          1px solid var(--c-antler-dk);
+    border-radius:   2px;
+    font-size:       0.65rem;
+    font-family:     var(--font-sans);
+    font-weight:     500;
+    letter-spacing:  0.08em;
+    text-transform:  uppercase;
+    color:           var(--c-antler);
+    background:      rgba(212,184,150,0.08);
+  }
+
+  /* ── Button styles ────────────────────────────────────────────────── */
+  .btn-gold {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    gap:             0.5rem;
+    padding:         0.75rem 1.75rem;
+    background:      var(--c-gold);
+    color:           #0f1a0e;
+    font-family:     var(--font-sans);
+    font-weight:     600;
+    font-size:       0.85rem;
+    letter-spacing:  0.06em;
+    text-transform:  uppercase;
+    text-decoration: none;
+    border:          none;
+    cursor:          pointer;
+    transition:      background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .btn-gold:hover {
+    background:  var(--c-gold-lt);
+    box-shadow:  0 0 20px rgba(184,134,11,0.35);
+    transform:   translateY(-1px);
+  }
+
+  .btn-outline {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    gap:             0.5rem;
+    padding:         0.7rem 1.6rem;
+    background:      transparent;
+    color:           var(--c-antler);
+    font-family:     var(--font-sans);
+    font-weight:     500;
+    font-size:       0.85rem;
+    letter-spacing:  0.06em;
+    text-transform:  uppercase;
+    text-decoration: none;
+    border:          1px solid var(--c-antler-dk);
+    cursor:          pointer;
+    transition:      border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .btn-outline:hover {
+    border-color: var(--c-antler);
+    color:        var(--c-text);
+    background:   rgba(212,184,150,0.08);
+  }
+
+  /* ── Card ─────────────────────────────────────────────────────────── */
+  .card {
+    background:    var(--c-surface);
+    border:        1px solid var(--c-border);
+    transition:    border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  }
+  .card:hover {
+    border-color:  var(--c-border-gold);
+    box-shadow:    0 8px 32px rgba(0,0,0,0.55);
+    transform:     translateY(-2px);
+  }
+
+  /* ── Shimmer overlay — image hover effect (sister site pattern) ──── */
+  .shimmer-overlay {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.13) 50%,
+      transparent 80%
+    );
+    transform: translateX(-110%);
+    transition: transform 0.55s ease;
+    pointer-events: none;
+  }
+  .shimmer-overlay:hover::after {
+    transform: translateX(110%);
+  }
+  html.light .shimmer-overlay::after {
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.28) 50%,
+      transparent 80%
+    );
+  }
+
+  /* ── Animations ───────────────────────────────────────────────────── */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up { animation: fade-up 0.55s ease both; }
+
+  /* Stagger helpers */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  /* ── Selection ────────────────────────────────────────────────────── */
+  ::selection                  { background-color: #b8860b; color: #0f1a0e; }
+  html.light ::selection       { background-color: #8b6200; color: #f4efe6; }
+
+  /* ── Scrollbar ────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar              { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track        { background: var(--c-bg-2); }
+  ::-webkit-scrollbar-thumb        { background: var(--c-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover  { background: var(--c-gold); }
+  html.light ::-webkit-scrollbar-track       { background: #ece6db; }
+  html.light ::-webkit-scrollbar-thumb       { background: #d8cec0; }
+  html.light ::-webkit-scrollbar-thumb:hover { background: #8b6200; }
+
+  /* ── Light theme: override hardcoded Tailwind arbitrary hex classes ─ */
+  /*    These rules flip every hardcoded dark-palette class when         */
+  /*    html.light is active — no page files need to be touched.         */
+
+  /* Backgrounds */
+  html.light [class*="bg-[#0f1a0e]"]:not([class*="bg-[#0f1a0e]/"]) { background-color: #f4efe6 !important; }
+  html.light [class*="bg-[#0f1a0e]/30"]                             { background-color: rgba(244,239,230,0.3) !important; }
+  html.light [class*="bg-[#162114]"]                                { background-color: #ece6db !important; }
+  html.light [class*="bg-[#1c2a1b]"]:not([class*="bg-[#1c2a1b]/"])  { background-color: #ffffff !important; }
+  html.light [class*="bg-[#1c2a1b]/40"]                             { background-color: rgba(255,255,255,0.4) !important; }
+  html.light [class*="bg-[#b8860b]"]:not([class*="bg-[#b8860b]/"])  { background-color: #8b6200 !important; }
+  html.light [class*="bg-[#b8860b]/10"]                             { background-color: rgba(139,98,0,0.1) !important; }
+
+  /* Hero gradient (homepage) */
+  html.light .hero-gradient {
+    background: radial-gradient(ellipse at 60% 40%, #e0d5c4 0%, #f4efe6 65%) !important;
+  }
+
+  /* Text colors */
+  html.light [class*="text-[#f0ede8]"] { color: #1a1208 !important; }
+  html.light [class*="text-[#b8b5ae]"] { color: #4a3828 !important; }
+  html.light [class*="text-[#7a7770]"] { color: #8a7a68 !important; }
+  html.light [class*="text-[#d4b896]"] { color: #5c3a12 !important; }
+  html.light [class*="text-[#a8886a]"] { color: #7a5230 !important; }
+  html.light [class*="text-[#b8860b]"] { color: #8b6200 !important; }
+
+  /* Border colors */
+  html.light [class*="border-[#2e3d2d]"] { border-color: #d8cec0 !important; }
+  html.light [class*="border-[#b8860b]"] { border-color: #8b6200 !important; }
+
+  /* Hover: text */
+  html.light [class*="hover:text-[#d4b896]"]:hover { color: #5c3a12 !important; }
+  html.light [class*="hover:text-[#f0ede8]"]:hover  { color: #1a1208 !important; }
+  html.light [class*="hover:text-[#b8860b]"]:hover  { color: #8b6200 !important; }
+
+  /* Hover: border */
+  html.light [class*="hover:border-[#b8860b]"]:hover { border-color: #8b6200 !important; }
+
+  /* Hover: bg */
+  html.light [class*="hover:bg-[#0f1a0e]"]:hover   { background-color: #ece6db !important; }
+
+  /* Card shadow — softer in light mode */
+  html.light .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+
+  /* Noise overlay — less visible in light mode */
+  html.light .pointer-events-none.fixed.inset-0.z-0 { opacity: 0.012 !important; }
+
+  /* ── Focus ────────────────────────────────────────────────────────── */
+  :focus-visible {
+    outline:        2px solid var(--c-gold);
+    outline-offset: 3px;
+  }
+
+  /* ── Links ────────────────────────────────────────────────────────── */
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--c-antler); }
+
+  /* ── Prose (blog content) ─────────────────────────────────────────── */
+  .prose-antler {
+    color:       var(--c-text);
+    max-width:   65ch;
+    line-height: 1.75;
+  }
+  .prose-antler h1,
+  .prose-antler h2,
+  .prose-antler h3 {
+    font-family:    var(--font-serif);
+    margin-top:     2em;
+    margin-bottom:  0.5em;
+    color:          var(--c-text);
+  }
+  .prose-antler p        { margin-bottom: 1.25em; }
+  .prose-antler a        { color: var(--c-antler); text-decoration: underline; text-decoration-color: var(--c-antler-dk); }
+  .prose-antler a:hover  { color: var(--c-text); }
+  .prose-antler ul,
+  .prose-antler ol       { padding-left: 1.5em; margin-bottom: 1.25em; }
+  .prose-antler li       { margin-bottom: 0.4em; }
+  .prose-antler blockquote {
+    border-left: 3px solid var(--c-gold);
+    padding-left: 1.25em;
+    color:        var(--c-text-muted);
+    font-style:   italic;
+    margin:       1.5em 0;
+  }
+  .prose-antler strong { color: var(--c-antler); font-weight: 600; }
+  .prose-antler hr     { border: none; border-top: 1px solid var(--c-border); margin: 2em 0; }
+</style>

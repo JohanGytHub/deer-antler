@@ -1,0 +1,310 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import {
+  fetchProducts,
+  getProductAlt,
+  getProductImageSrc,
+  getProductUrl,
+  getCollectionPath,
+} from '../../data/products';
+import type { Product } from '../../types/product';
+
+// ---------------------------------------------------------------------------
+// getStaticPaths — generates one route per product at build time
+// ---------------------------------------------------------------------------
+export async function getStaticPaths() {
+  const products = await fetchProducts();
+  return products.map((product) => ({
+    params: { handle: product.handle },
+    props:  { product },
+  }));
+}
+
+interface Props { product: Product; }
+const { product } = Astro.props;
+
+const SITE_URL     = 'https://deer-antler.jewelry';
+const JBJ_URL      = 'https://jewelrybyjohan.com';
+
+// Cross-domain canonical — always points to the JBJ product page
+const canonicalUrl = `${JBJ_URL}/products/${product.handle}`;
+const jbjUrl       = getProductUrl(product);
+const collPath     = getCollectionPath(product);
+
+// Collection label for breadcrumb
+const collectionLabels: Record<string, string> = {
+  '/rings':     'Deer Antler Rings',
+  '/ring-sets': 'Ring Sets',
+  '/earrings':  'Earrings',
+  '/pendants':  'Pendants',
+  '/cufflinks': 'Cufflinks',
+  '/tie-clips': 'Tie Clips',
+  '/unique':    'Unique Pieces',
+  '/custom':    'Trophy Antler Custom',
+};
+const collectionLabel = collectionLabels[collPath] ?? 'Antler Jewelry';
+
+// Images
+const primaryImage = product.images.find((i) => i.position === 1) ?? product.images[0];
+const primaryAlt   = getProductAlt(product);
+const primarySrc   = getProductImageSrc(product);
+const ogImage      = primarySrc;
+
+// All images for gallery
+const galleryImages = product.images.slice(0, 6);
+
+// Breadcrumbs
+const breadcrumbs = [
+  { name: 'Home',           item: `${SITE_URL}/` },
+  { name: collectionLabel,  item: `${SITE_URL}${collPath}` },
+  { name: product.title,    item: `${SITE_URL}/products/${product.handle}` },
+];
+
+// Meta title / description — built from product data
+const metaTitle = `${product.title.slice(0, 50)} | Jewelry by Johan`;
+const metaDesc  = `${product.title} — handcrafted deer antler jewelry made in Minneapolis, USA. Naturally shed antler, Ring Armor coating, free laser engraving. Order at Jewelry by Johan.`.slice(0, 160);
+
+// Product JSON-LD — NO offers block, uses sameAs + manufacturer pattern
+const productSchema = {
+  '@context':    'https://schema.org',
+  '@type':       'Product',
+  name:          product.title,
+  description:   product.body_html.replace(/<[^>]*>/g, '').slice(0, 300),
+  url:           jbjUrl,
+  image:         galleryImages.map((img) => img.src),
+  sku:           product.variants[0]?.sku ?? product.handle,
+  brand: {
+    '@type': 'Brand',
+    name:    'Jewelry by Johan',
+  },
+  manufacturer: {
+    '@type': 'Organization',
+    name:    'Jewelry by Johan',
+    url:     JBJ_URL,
+    '@id':   `${JBJ_URL}/#organization`,
+    address: {
+      '@type':           'PostalAddress',
+      addressLocality:   'Minneapolis',
+      addressRegion:     'MN',
+      addressCountry:    'US',
+    },
+  },
+  sameAs: [ jbjUrl ],
+  material: 'Deer Antler',
+  countryOfOrigin: 'US',
+};
+
+// Related products — same collection, exclude self, max 4
+const allProducts  = await fetchProducts();
+const related = allProducts
+  .filter((p) => p.product_type === product.product_type && p.handle !== product.handle)
+  .slice(0, 4);
+
+// Detect combo materials
+const titleLower   = product.title.toLowerCase();
+const hasMeteor    = titleLower.includes('meteorite');
+const hasDinoBone  = titleLower.includes('dinosaur') || titleLower.includes('dino');
+const hasWood      = titleLower.includes('wood') || titleLower.includes('koa') || titleLower.includes('whiskey');
+const hasTurquoise = titleLower.includes('turquoise');
+const hasOpal      = titleLower.includes('opal');
+const isElk        = titleLower.includes('elk');
+const isMoose      = titleLower.includes('moose');
+
+// Strip HTML from body for plain text display
+const bodyText = product.body_html
+  .replace(/<br\s*\/?>/gi, '\n')
+  .replace(/<\/p>/gi, '\n\n')
+  .replace(/<\/li>/gi, '\n')
+  .replace(/<[^>]+>/g, '')
+  .replace(/&amp;/g, '&')
+  .replace(/&nbsp;/g, ' ')
+  .replace(/&ldquo;/g, '"')
+  .replace(/&rdquo;/g, '"')
+  .replace(/&mdash;/g, '—')
+  .replace(/\n{3,}/g, '\n\n')
+  .trim();
+---
+
+<BaseLayout
+  title={metaTitle}
+  description={metaDesc}
+  canonicalUrl={canonicalUrl}
+  ogImage={ogImage}
+  breadcrumbs={breadcrumbs}
+>
+  <slot name="head" slot="head">
+    <!-- Product schema -->
+    <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  </slot>
+
+  <Nav />
+
+  <main>
+    <!-- Breadcrumb -->
+    <div class="bg-[#162114] border-b border-[#2e3d2d] py-3">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav aria-label="Breadcrumb">
+          <ol class="flex items-center gap-2 text-xs font-sans text-[#7a7770] flex-wrap">
+            <li><a href="/" class="hover:text-[#d4b896] transition-colors">Home</a></li>
+            <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+            <li><a href={collPath} class="hover:text-[#d4b896] transition-colors">{collectionLabel}</a></li>
+            <li aria-hidden="true"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></li>
+            <li class="text-[#d4b896] truncate max-w-[200px]" aria-current="page">{product.title}</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Product detail -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+        <!-- Image gallery -->
+        <div>
+          <!-- Primary image -->
+          <div class="aspect-square bg-[#162114] border border-[#2e3d2d] overflow-hidden mb-3">
+            <img
+              id="primary-img"
+              src={primarySrc}
+              alt={primaryAlt}
+              width="800"
+              height="800"
+              loading="eager"
+              decoding="async"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <!-- Thumbnail strip -->
+          {galleryImages.length > 1 && (
+            <div class="flex gap-2 flex-wrap">
+              {galleryImages.map((img, i) => (
+                <button
+                  class="thumbnail-btn w-16 h-16 border border-[#2e3d2d] overflow-hidden hover:border-[#b8860b] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#b8860b]"
+                  data-src={img.src}
+                  data-alt={(img.alt?.trim()) || product.title}
+                  aria-label={`View image ${i + 1} of ${product.title}`}
+                >
+                  <img src={img.src} alt="" width="64" height="64" loading="lazy" class="w-full h-full object-cover" aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Product info -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Badges -->
+          <div class="flex flex-wrap gap-2">
+            <span class="badge-antler">Genuine Antler</span>
+            {hasMeteor    && <span class="badge-antler">Antler + Meteorite</span>}
+            {hasDinoBone  && <span class="badge-antler">Antler + Dino Bone</span>}
+            {hasWood      && <span class="badge-antler">Antler + Wood</span>}
+            {hasTurquoise && <span class="badge-antler">Antler + Turquoise</span>}
+            {hasOpal      && <span class="badge-antler">Antler + Opal</span>}
+            {isElk        && <span class="badge-antler">Elk Antler</span>}
+            {isMoose      && <span class="badge-antler">Moose Antler</span>}
+            <span class="badge-antler">Made in USA</span>
+          </div>
+
+          <!-- Title -->
+          <h1 class="font-serif text-[clamp(1.5rem,3vw,2.5rem)] text-[#f0ede8] leading-tight">
+            {product.title}
+          </h1>
+
+          <!-- Key features -->
+          <ul class="space-y-2">
+            {[
+              'Naturally shed antler — ethically sourced, no animals harmed',
+              'Ring Armor protective coating applied',
+              'Free laser engraving up to 25 characters with font choice',
+              'Handcrafted in Minneapolis, USA by skilled bench jewelers',
+              'Cannot be resized — verify your size before ordering',
+            ].map((feat) => (
+              <li class="flex items-start gap-2 text-sm text-[#b8b5ae]">
+                <svg class="w-4 h-4 text-[#b8860b] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                </svg>
+                {feat}
+              </li>
+            ))}
+          </ul>
+
+          <hr class="divider-gold" />
+
+          <!-- No price — redirect to JBJ -->
+          <div class="bg-[#1c2a1b] border border-[#2e3d2d] p-5">
+            <p class="text-xs text-[#7a7770] mb-3 font-sans">All orders are placed at Jewelry by Johan. Free laser engraving and Ring Armor coating included.</p>
+            <a
+              href={jbjUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-gold w-full justify-center"
+              aria-label={`Order ${product.title} at Jewelry by Johan`}
+            >
+              Order at Jewelry by Johan
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Cannot resize warning -->
+          <div class="flex items-start gap-2 text-xs text-[#7a7770] bg-[#162114] border border-[#2e3d2d] px-4 py-3">
+            <svg class="w-4 h-4 text-[#b8860b] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+            <span>Antler rings <strong class="text-[#b8b5ae]">cannot be resized</strong> after crafting. Please <a href="/sizing-guide" class="text-[#d4b896] hover:underline">verify your size</a> before ordering.</span>
+          </div>
+
+          <!-- Sizing link -->
+          <a href="/sizing-guide" class="btn-outline text-sm justify-center">
+            View Ring Sizing Guide
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Description -->
+      {bodyText && (
+        <section class="mt-14 max-w-3xl">
+          <h2 class="font-serif text-2xl text-[#f0ede8] mb-5">About This Ring</h2>
+          <div class="prose-antler text-sm whitespace-pre-line">{bodyText}</div>
+        </section>
+      )}
+
+      <!-- Related products -->
+      {related.length > 0 && (
+        <section class="mt-16 pt-12 border-t border-[#2e3d2d]">
+          <h2 class="font-serif text-2xl text-[#f0ede8] mb-6">You May Also Like</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {related.map((p) => <ProductCard product={p} />)}
+          </div>
+        </section>
+      )}
+
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  // Thumbnail gallery switcher
+  const primaryImg = document.getElementById('primary-img') as HTMLImageElement | null;
+  document.querySelectorAll<HTMLButtonElement>('.thumbnail-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (primaryImg) {
+        primaryImg.src = btn.dataset.src ?? primaryImg.src;
+        primaryImg.alt = btn.dataset.alt ?? primaryImg.alt;
+      }
+      document.querySelectorAll('.thumbnail-btn').forEach((b) =>
+        b.classList.remove('border-[#b8860b]')
+      );
+      btn.classList.add('border-[#b8860b]');
+    });
+  });
+</script>
