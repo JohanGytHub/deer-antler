@@ -9,7 +9,7 @@
 // ---------------------------------------------------------------------------
 
 const SITE     = 'https://deer-antler.jewelry';
-const KEY      = '3fa28d3c4b944c30a82ede85c798aeae';
+const KEY      = '567eabed3f7049aa92b5fa2f7d12972d';
 const SITEMAP  = `${SITE}/sitemap.xml`;
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
 
